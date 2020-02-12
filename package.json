@@ -1,0 +1,14 @@
+{
+    "devDependencies": {
+        "@babel/core": "^7.8.4",
+        "@babel/preset-typescript": "^7.8.3",
+        "babel-loader": "^8.0.6",
+        "webpack": "^4.41.6",
+        "webpack-cli": "^3.3.11"
+    },
+    "scripts": {
+        "build": "webpack --config webpack.config.js --progress --mode production",
+        "dev": "webpack --config webpack.config.js --watch --progress --mode development",
+        "see-errors": "webpack --display-error-details"
+    }
+}
