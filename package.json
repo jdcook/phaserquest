@@ -9,8 +9,7 @@
     },
     "scripts": {
         "build": "webpack --progress --mode production",
-        "dev": "webpack-dev-server",
-        "see-errors": "webpack --display-error-details"
+        "dev": "webpack-dev-server"
     },
     "dependencies": {
         "phaser": "^3.22.0"
