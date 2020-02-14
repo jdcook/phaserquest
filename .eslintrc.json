@@ -5,17 +5,14 @@
         "commonjs": true
     },
     "parser": "@typescript-eslint/parser",
-    "extends": [
-        "airbnb",
-        "prettier"
-    ],
+    "extends": ["airbnb", "prettier"],
     "plugins": ["prettier"],
     "parserOptions": {
         "emcaVersion": 2018,
         "sourceType": "module"
     },
-    "rules": { // 0 = off, 1 = warn, 2 = error
-        "prettier/prettier": ["error"],
-        "@typescript-eslint/no-empty-function": 1
+    "rules": {
+        // 0 = off, 1 = warn, 2 = error
+        "prettier/prettier": ["error"]
     }
 }
