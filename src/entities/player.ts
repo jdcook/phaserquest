@@ -10,9 +10,9 @@ export class Player extends Phaser.GameObjects.GameObject {
     }
 
     update(): void {
-        if(this.arrowKeys.left.isDown) {
+        if (this.arrowKeys.left.isDown) {
             this.sprite.setVelocityX(-500);
-        } else if(this.arrowKeys.right.isDown) {
+        } else if (this.arrowKeys.right.isDown) {
             this.sprite.setVelocityX(500);
         } else {
             this.sprite.setVelocityX(0);
