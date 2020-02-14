@@ -1,7 +1,7 @@
 {
-    "proseWrap": "never",
+    "printWidth": 200,
     "tabWidth": 4,
+    "proseWrap": "never",
     "trailingComma": "es5",
-    "endofLine": "lf",
-    "printWidth": 200
+    "endofLine": "lf"
 }

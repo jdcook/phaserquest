@@ -1,3 +1,4 @@
+import * as Phaser from "phaser";
 import { Player } from "../entities/player";
 
 export class MainScene extends Phaser.Scene {
@@ -20,10 +21,7 @@ export class MainScene extends Phaser.Scene {
 
     public create(): void {
         //physics setup
-        this.entityGroup = this.add.group({
-            classType: Phaser.GameObjects.GameObject,
-            runChildUpdate: true,
-        });
+        this.entityGroup = this.add.group({ classType: Phaser.GameObjects.GameObject, runChildUpdate: true });
         this.terrainGroup = this.physics.add.staticGroup();
 
         this.player = new Player(this);
