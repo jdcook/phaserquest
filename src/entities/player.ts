@@ -9,7 +9,7 @@ export class Player extends Phaser.GameObjects.GameObject {
         this.arrowKeys = this.scene.input.keyboard.createCursorKeys();
     }
 
-    update() {
+    update(): void {
         if(this.arrowKeys.left.isDown) {
             this.sprite.setVelocityX(-500);
         } else if(this.arrowKeys.right.isDown) {
