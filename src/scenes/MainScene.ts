@@ -1,10 +1,15 @@
+import { Player } from "../entities/player";
+import { Physics } from "phaser";
 
 export class MainScene extends Phaser.Scene {
-    square: Phaser.GameObjects.Rectangle & { body: Phaser.Physics.Arcade.Body };
     direction: Phaser.Types.Math.Vector2Like = {
         x: 1,
         y: 1,
     };
+
+    player: Player;
+
+    entityGroup: Phaser.GameObjects.Group;
 
     constructor() {
         super({
@@ -14,24 +19,20 @@ export class MainScene extends Phaser.Scene {
         });
     }
 
+    public preload() {
+        this.load.spritesheet("player", "assets/dude.png", { frameWidth: 32, frameHeight: 48 });
+    }
+
     public create() {
-        this.square = this.add.rectangle(400, 400, 100, 100, 0xFFF) as any;
+        //groups
+        this.entityGroup = this.add.group({ classType: Phaser.GameObjects.GameObject, runChildUpdate: true });
         this.physics.add.existing(this.square);
+
+        this.player = new Player(this);
+        this.entityGroup.add(this.player);
     }
 
     public update() {
-        this.square.x += 10 * this.direction.x;
-        this.square.y += 10 * this.direction.y;
-
-        if (this.square.x >= this.game.scale.width - this.square.width / 2) {
-            this.direction.x = -1;
-        } else if (this.square.x <= this.square.width / 2) {
-            this.direction.x = 1;
-        }
-        if (this.square.y >= this.game.scale.height - this.square.height / 2) {
-            this.direction.y = -1;
-        } else if (this.square.y <= this.square.height / 2) {
-            this.direction.y = 1;
-        }
+        
     }
 }
