@@ -26,13 +26,12 @@ export class MainScene extends Phaser.Scene {
     public create() {
         //groups
         this.entityGroup = this.add.group({ classType: Phaser.GameObjects.GameObject, runChildUpdate: true });
-        this.physics.add.existing(this.square);
 
         this.player = new Player(this);
         this.entityGroup.add(this.player);
     }
 
     public update() {
-        
+
     }
 }
