@@ -12,6 +12,6 @@ To make use of the auto code formatting config and typescript intellisense in th
 - Enable formatOnSave in settings (file->preferences->settings)
 
 ## Running project
-"yarn dev" or "yarn start" to compile with webpack and start a webpack server. Open "localhost:8080" in your browser to load the game.
+Run "yarn dev" or "yarn start" to compile with webpack and start a webpack server. Open "localhost:8080" in your browser to load the game.
 
-"yarn build" to output a production build.
+Run "yarn build" to output a production build.
