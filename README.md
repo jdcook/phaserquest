@@ -9,7 +9,9 @@ Run "yarn" in the command line to install dependencies.
 To make use of the auto code formatting config and typescript intellisense in this project:
     
     -Download Visual Studio Code: https://code.visualstudio.com/
+    
     -Install the "Prettier - Code Formatter" extension
+    
     -Enable formatOnSave in settings (file->preferences->settings)
 
 ## Running project
