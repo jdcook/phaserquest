@@ -1,7 +1,7 @@
 import * as Phaser from "phaser";
-import { Player } from "../entities/player";
+import Player from "../entities/player";
 
-export class MainScene extends Phaser.Scene {
+export default class MainScene extends Phaser.Scene {
     player: Player;
     entityGroup: Phaser.GameObjects.Group;
     terrainGroup: Phaser.Physics.Arcade.StaticGroup;

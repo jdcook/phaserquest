@@ -1,6 +1,7 @@
 import { game } from "../main";
+import { Vector } from "matter";
 
-export class Player extends Phaser.Physics.Arcade.Sprite {
+export default class Player extends Phaser.Physics.Arcade.Sprite {
     arrowKeys: Phaser.Types.Input.Keyboard.CursorKeys;
     keyW: Phaser.Input.Keyboard.Key;
     keyA: Phaser.Input.Keyboard.Key;
@@ -17,13 +18,10 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         this.keyA = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyS = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyD = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-
-        this.anims.load("left");
-        this.anims.load("right");
-        this.anims.load("turn");
     }
 
     update(time, delta): void {
+        // left/right movement
         if (this.arrowKeys.left.isDown || this.keyA.isDown) {
             this.setVelocityX(-500);
             this.anims.play("left", true);
@@ -35,21 +33,19 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             this.anims.play("turn", true);
         }
 
+        // jumping - velocity calculated with jumpsquat (smashbros-like)
         if (this.arrowKeys.space.isDown) {
             this.jumpHoldCounter += delta;
         }
         if (this.arrowKeys.space.isUp || this.jumpHoldCounter > 96) {
             if (this.jumpHoldCounter > 0 && this.body.velocity.y <= 0 && this.body.touching.down) {
-                this.setVelocityY(Math.max(400, this.jumpHoldCounter * 10));
-                if (this.jumpHoldCounter >= 96) {
-                    this.setVelocityY(-1000);
-                } else if (this.jumpHoldCounter >= 64) {
-                    this.setVelocityY(-800);
-                } else if (this.jumpHoldCounter >= 32) {
-                    this.setVelocityY(-600);
-                }
+                this.setVelocityY(Math.min(-400, -this.jumpHoldCounter * 8));
             }
             this.jumpHoldCounter = 0;
+        }
+
+        // phaser
+        if (this.scene.input.activePointer.active) {
         }
     }
 }

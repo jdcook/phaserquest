@@ -1,5 +1,5 @@
 import * as Phaser from "phaser";
-import { MainScene } from "./scenes/MainScene";
+import MainScene from "./scenes/MainScene";
 
 const gameConfig: Phaser.Types.Core.GameConfig = {
     title: "Phaser Quest",
