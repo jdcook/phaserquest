@@ -1,4 +1,4 @@
-export default class BigBadGuy extends Phaser.Physics.Arcade.Sprite {
+export default class BigBadGuy extends Phaser.Physics.Matter.Sprite {
     private moveCounter: number = 0;
     private originalPos = { x: 0, y: 0 };
 

@@ -1,8 +1,9 @@
 import { game } from "../main";
 import PhaserBeam from "../attacks/phaserBeam";
 import { DEPTH_VALUES } from "../constants";
+import MainScene from "../scenes/MainScene";
 
-export default class Player extends Phaser.Physics.Arcade.Sprite {
+export default class Player extends Phaser.Physics.Matter.Sprite {
     private arrowKeys: Phaser.Types.Input.Keyboard.CursorKeys;
     private keyW: Phaser.Input.Keyboard.Key;
     private keyA: Phaser.Input.Keyboard.Key;
@@ -16,8 +17,14 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.phaserBeam = phaserBeam;
     }
 
-    constructor(scene) {
-        super(scene, 100, 100, "player");
+    constructor(world, scene: MainScene) {
+        super(world, 100, 100, "player", null, {
+            collisionFilter: {
+                category: scene.collisionGroupPlayer,
+                mask: scene.collisionGroupTerrain | scene.collisionGroupEnemyProjectiles,
+            },
+        });
+
         this.depth = DEPTH_VALUES.PLAYER;
 
         this.arrowKeys = this.scene.input.keyboard.createCursorKeys();
@@ -46,9 +53,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
             this.jumpHoldCounter += delta;
         }
         if (this.arrowKeys.space.isUp || this.jumpHoldCounter > 96) {
-            if (this.jumpHoldCounter > 0 && this.body.velocity.y <= 0 && this.body.touching.down) {
-                this.setVelocityY(Math.min(-400, -this.jumpHoldCounter * 8));
-            }
+            // if (this.jumpHoldCounter > 0 && this.velocity.y <= 0 && this.body.touching.down) {
+            //     this.setVelocityY(Math.min(-400, -this.jumpHoldCounter * 8));
+            // }
             this.jumpHoldCounter = 0;
         }
 
