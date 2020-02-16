@@ -1,17 +1,26 @@
 import { game } from "../main";
 import { Vector } from "matter";
+import PhaserBeam from "../attacks/phaserBeam";
+import { DEPTH_VALUES } from "../constants";
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
-    arrowKeys: Phaser.Types.Input.Keyboard.CursorKeys;
-    keyW: Phaser.Input.Keyboard.Key;
-    keyA: Phaser.Input.Keyboard.Key;
-    keyS: Phaser.Input.Keyboard.Key;
-    keyD: Phaser.Input.Keyboard.Key;
+    private arrowKeys: Phaser.Types.Input.Keyboard.CursorKeys;
+    private keyW: Phaser.Input.Keyboard.Key;
+    private keyA: Phaser.Input.Keyboard.Key;
+    private keyS: Phaser.Input.Keyboard.Key;
+    private keyD: Phaser.Input.Keyboard.Key;
 
-    jumpHoldCounter: number = 0;
+    private jumpHoldCounter: number = 0;
+    private phaserBeam: PhaserBeam;
+
+    setPhaserBeam(phaserBeam: PhaserBeam) {
+        this.phaserBeam = phaserBeam;
+    }
 
     constructor(scene) {
         super(scene, 100, 100, "player");
+        this.depth = DEPTH_VALUES.PLAYER;
+
         this.arrowKeys = this.scene.input.keyboard.createCursorKeys();
         this.scene.input.keyboard.createCombo;
         this.keyW = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
@@ -45,7 +54,12 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         }
 
         // phaser
-        if (this.scene.input.activePointer.active) {
+        if (this.phaserBeam) {
+            if (this.scene.input.activePointer.isDown) {
+                this.phaserBeam.startFiring(new Phaser.Math.Vector2(this.x, this.y), this.scene.input.activePointer.position);
+            } else {
+                this.phaserBeam.stopFiring();
+            }
         }
     }
 }
