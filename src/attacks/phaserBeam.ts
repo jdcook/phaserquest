@@ -36,7 +36,6 @@ export default class PhaserBeam extends Phaser.GameObjects.Sprite {
         const direction = new Phaser.Math.Vector2(diff);
         direction.normalize();
         this.setPosition(startPosition.x + direction.x * halfPhaserLen, startPosition.y + direction.y * halfPhaserLen);
-        //this.setPosition(startPosition.x, startPosition.y);
         this.setScale(halfPhaserLen * this.SCALE, 1);
         const radians = Math.atan2(diff.y, diff.x);
         this.setRotation(radians);

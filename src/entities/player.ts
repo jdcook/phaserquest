@@ -1,5 +1,4 @@
 import { game } from "../main";
-import { Vector } from "matter";
 import PhaserBeam from "../attacks/phaserBeam";
 import { DEPTH_VALUES } from "../constants";
 
