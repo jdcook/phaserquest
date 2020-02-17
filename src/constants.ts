@@ -1,4 +1,5 @@
 export const DEPTH_VALUES = {
+    PARTICLES: 1000,
     FOREGROUND: 40,
     PROJECTILES: 30,
     PLAYER: 20,

@@ -33,7 +33,7 @@ export default class Player extends KillableEntity {
         scene.add.existing(this.phaserBeam);
     }
 
-    update(time, delta): void {
+    update(time: number, delta: number): void {
         // left/right movement
         if (this.arrowKeys.left.isDown || this.keyA.isDown) {
             this.setVelocityX(-500);

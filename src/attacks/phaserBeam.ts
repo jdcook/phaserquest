@@ -10,6 +10,7 @@ export default class PhaserBeam extends Phaser.GameObjects.Sprite {
     private firing: boolean;
     private audioPhaser: Phaser.Sound.BaseSound;
     private raycastLine: Phaser.Geom.Line;
+    private particles: Phaser.GameObjects.Particles.ParticleEmitter;
 
     constructor(scene: SceneBase) {
         super(scene, 0, 0, "phaserBeam");
@@ -63,13 +64,32 @@ export default class PhaserBeam extends Phaser.GameObjects.Sprite {
         this.setRotation(radians);
 
         // spawn particle system on edge of phaser
+        if (!this.particles) {
+            const particleManager = this.scene.add.particles("particleRed");
+            particleManager.depth = DEPTH_VALUES.PARTICLES;
+            this.particles = particleManager.createEmitter({
+                blendMode: "ADD",
+                frequency: 100,
+                gravityY: 0,
+                lifespan: { min: 200, max: 1000 },
+                quantity: 1,
+                scale: { start: 0.5, end: 0 },
+                speed: 40,
+            });
+        }
+        if (!this.particles.on) {
+            this.particles.start();
+            this.particles.speedX;
+        }
+        this.particles.setPosition(startPosition.x + direction.x * phaserLen, startPosition.y + direction.y * phaserLen);
     }
 
     stopFiring(): void {
         if (this.firing) {
+            this.firing = false;
+            this.visible = false;
             this.audioPhaser.stop();
+            this.particles.stop();
         }
-        this.firing = false;
-        this.visible = false;
     }
 }

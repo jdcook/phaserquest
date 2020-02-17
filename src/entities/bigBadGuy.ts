@@ -14,8 +14,14 @@ export default class BigBadGuy extends KillableEntity {
         // let scene call init after being added to physics group, so that we can access the body (not available in constructor)
         (this.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
     }
-    update(time, delta): void {
+    update(time: number, delta: number): void {
+        super.update(time, delta);
         this.moveCounter += delta * 0.001;
         this.setPosition(this.originalPos.x + Math.sin(this.moveCounter) * 100, this.originalPos.y);
+    }
+
+    damage(amount: number): void {
+        super.damage(amount);
+        this.flashTint(0xff0000, 250, true);
     }
 }
