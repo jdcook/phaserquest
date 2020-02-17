@@ -1,7 +1,7 @@
 import Player from "../entities/player";
 import { Vector } from "matter";
 import { GameObjects } from "phaser";
-import { RaycastHitResult } from "../types";
+import { RaycastHitResult, RaycastHitResults } from "../types";
 
 export default class SceneBase extends Phaser.Scene {
     playerGroup: Phaser.GameObjects.Group;
@@ -48,18 +48,53 @@ export default class SceneBase extends Phaser.Scene {
     /*
      * Returns an array of intersections with entities of the given group
      */
-    rayCast(line: Phaser.Geom.Line, group: Phaser.GameObjects.Group): Array<RaycastHitResult> {
-        const hitResultList = [];
+    rayCast(ray: Phaser.Geom.Line, group: Phaser.GameObjects.Group): Array<RaycastHitResults> {
+        const hitResultList: Array<RaycastHitResults> = [];
         group.children.each(entity => {
-            if (Phaser.Geom.Intersects.LineToRectangle(line, entity.body)) {
+            if (Phaser.Geom.Intersects.LineToRectangle(ray, entity.body)) {
                 const body = entity.body as Phaser.Physics.Arcade.Body;
-                const intersectionPoints = this.getIntersectionPoints(line, body.x, body.right, body.y, body.bottom);
+                const intersectionPoints = this.getIntersectionPoints(ray, body.x, body.right, body.y, body.bottom);
                 if (intersectionPoints?.length) {
-                    hitResultList.push({ entity, intersectionPoints });
+                    hitResultList.push({ hitGameObject: entity, intersectionPoints });
                 }
             }
         });
 
         return hitResultList;
+    }
+
+    /*
+     * Perform a raycast, then find the closest point to the start of the given line
+     */
+    raycastClosestHit(ray: Phaser.Geom.Line, group: Phaser.GameObjects.Group): RaycastHitResult {
+        const hitResults = this.rayCast(ray, group);
+
+        if (hitResults.length) {
+            let hitEntity = null;
+            let closestDistance = Number.MAX_VALUE;
+            let closestPoint: Phaser.Math.Vector2;
+            for (let i = 0; i < hitResults.length; ++i) {
+                for (let j = 0; j < hitResults[i].intersectionPoints.length; ++j) {
+                    const vector = hitResults[i].intersectionPoints[j];
+                    // using distance^2 to avoid unnecessary square roots, calculate actual distance once we find the closest point
+                    const a = vector.x - ray.x1;
+                    const b = vector.y - ray.y1;
+                    const distSq = a * a + b * b;
+                    if (distSq < closestDistance) {
+                        closestDistance = distSq;
+                        closestPoint = vector;
+                        hitEntity = hitResults[i].hitGameObject;
+                    }
+                }
+            }
+
+            return {
+                hitGameObject: hitEntity,
+                intersectionPoint: closestPoint,
+                distance: Math.sqrt(closestDistance),
+            };
+        }
+
+        return null;
     }
 }

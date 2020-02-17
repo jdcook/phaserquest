@@ -1,9 +1,12 @@
 import { DEPTH_VALUES } from "../constants";
 import SceneBase from "../scenes/SceneBase";
+import KillableEntity from "../entities/killableEntity";
 
 export default class PhaserBeam extends Phaser.GameObjects.Sprite {
-    private gameScene: SceneBase;
     private readonly SCALE: number = 2;
+    private readonly MAX_LEN: number = 2000;
+
+    private gameScene: SceneBase;
     private firing: boolean;
     private audioPhaser: Phaser.Sound.BaseSound;
     private raycastLine: Phaser.Geom.Line;
@@ -33,44 +36,33 @@ export default class PhaserBeam extends Phaser.GameObjects.Sprite {
         const direction = new Phaser.Math.Vector2(diff);
         direction.normalize();
 
-        // raycast to see how long this should be
-        this.raycastLine.setTo(startPosition.x, startPosition.y, startPosition.x + direction.x * 1000, startPosition.y + direction.y * 1000);
-        const hitResults = this.gameScene.rayCast(this.raycastLine, this.gameScene.enemyGroup);
-        let phaserLen;
-
-        // if hit something, only go to the hit entity
-        if (hitResults.length) {
-            let hitEntity = null;
-            phaserLen = Number.MAX_VALUE;
-            for (let i = 0; i < hitResults.length; ++i) {
-                for (let j = 0; j < hitResults[i].intersectionPoints.length; ++j) {
-                    const vector = hitResults[i].intersectionPoints[j];
-                    // use distance squared to avoid unnecessary square roots, calculate actual distance once we find the closest point
-                    const distSq = startPosition.distanceSq(vector);
-                    if (distSq < phaserLen) {
-                        phaserLen = distSq;
-                        hitEntity = hitResults[i].hitGameObject;
-                    }
+        // raycast to see how long this should be. If no raycast hit is detected, continue past the edge of the screen
+        let phaserLen = this.MAX_LEN;
+        this.raycastLine.setTo(
+            startPosition.x,
+            startPosition.y,
+            startPosition.x + direction.x * this.MAX_LEN,
+            startPosition.y + direction.y * this.MAX_LEN
+        );
+        const hitResult = this.gameScene.raycastClosestHit(this.raycastLine, this.gameScene.enemyGroup);
+        if (hitResult) {
+            phaserLen = hitResult.distance;
+            if (hitResult.hitGameObject) {
+                // damage entity
+                if (hitResult.hitGameObject instanceof KillableEntity) {
+                    const killable = hitResult.hitGameObject as KillableEntity;
+                    killable.damage(1);
                 }
             }
-
-            // get the real distance
-            phaserLen = Math.sqrt(phaserLen);
-            if (hitEntity) {
-                // todo: damage entity
-                // spawn particle system on hit
-            }
-        } else {
-            // if hit nothing, continue past the edge of the screen
-            phaserLen = 2000;
         }
 
         const halfPhaserLen = phaserLen / 2;
-
         this.setPosition(startPosition.x + direction.x * halfPhaserLen, startPosition.y + direction.y * halfPhaserLen);
         this.setScale(halfPhaserLen * this.SCALE, 1);
         const radians = Math.atan2(diff.y, diff.x);
         this.setRotation(radians);
+
+        // spawn particle system on edge of phaser
     }
 
     stopFiring(): void {

@@ -1,11 +1,12 @@
 import SceneBase from "../scenes/SceneBase";
+import KillableEntity from "./killableEntity";
 
-export default class BigBadGuy extends Phaser.Physics.Arcade.Sprite {
+export default class BigBadGuy extends KillableEntity {
     private moveCounter: number = 0;
     private originalPos = { x: 0, y: 0 };
 
-    constructor(scene: SceneBase, x, y) {
-        super(scene, x, y, "bigBadGuy");
+    constructor(scene: SceneBase, x: number, y: number) {
+        super(scene, x, y, "bigBadGuy", 100);
         this.originalPos.x = x;
         this.originalPos.y = y;
     }
