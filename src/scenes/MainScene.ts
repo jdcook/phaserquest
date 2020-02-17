@@ -17,11 +17,13 @@ export default class MainScene extends SceneBase {
 
     public preload(): void {
         this.load.spritesheet("player", "assets/textures/dude.png", { frameWidth: 32, frameHeight: 48 });
-        this.load.spritesheet("bigBadGuy", "assets/textures/bigBadGuy.png", { frameWidth: 137, frameHeight: 53 });
+        this.load.spritesheet("bigBadGuy", "assets/textures/big_bad_guy.png", { frameWidth: 137, frameHeight: 53 });
         this.load.image("dirt", "assets/textures/dirt.png");
-        this.load.image("phaserBeam", "assets/textures/phaserBeam.png");
+        this.load.image("phaserBeam", "assets/textures/phaser_beam.png");
+        this.load.spritesheet("bullet", "assets/textures/bullet.png", { frameWidth: 7, frameHeight: 7 });
+        this.load.spritesheet("greenBullet", "assets/textures/green_bullet.png", { frameWidth: 12, frameHeight: 28 });
 
-        this.load.audio("audioPhaserBeam", ["assets/audio/phaserBeam.ogg", "assets/audio/phaserBeam.mp3"]);
+        this.load.audio("audioPhaserBeam", ["assets/audio/phaser_beam.ogg", "assets/audio/phaser_beam.mp3"]);
     }
 
     public create(): void {
@@ -55,6 +57,19 @@ export default class MainScene extends SceneBase {
             key: "destroyed",
             frames: [{ key: "bigBadGuy", frame: 1 }],
             frameRate: 1,
+        });
+
+        this.anims.create({
+            key: "idle",
+            frames: this.anims.generateFrameNumbers("bullet", { start: 0, end: 2 }),
+            frameRate: 10,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: "idle",
+            frames: this.anims.generateFrameNumbers("greenBullet", { start: 0, end: 2 }),
+            frameRate: 10,
+            repeat: -1,
         });
 
         this.player = new Player(this);
