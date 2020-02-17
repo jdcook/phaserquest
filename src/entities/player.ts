@@ -1,6 +1,7 @@
 import { game } from "../main";
 import PhaserBeam from "../attacks/phaserBeam";
 import { DEPTH_VALUES } from "../constants";
+import SceneBase from "../scenes/SceneBase";
 
 export default class Player extends Phaser.Physics.Arcade.Sprite {
     private arrowKeys: Phaser.Types.Input.Keyboard.CursorKeys;
@@ -16,7 +17,7 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.phaserBeam = phaserBeam;
     }
 
-    constructor(scene) {
+    constructor(scene: SceneBase) {
         super(scene, 100, 100, "player");
         this.depth = DEPTH_VALUES.PLAYER;
 
@@ -26,6 +27,9 @@ export default class Player extends Phaser.Physics.Arcade.Sprite {
         this.keyA = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyS = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
         this.keyD = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
+        this.phaserBeam = new PhaserBeam(scene);
+        scene.add.existing(this.phaserBeam);
     }
 
     update(time, delta): void {

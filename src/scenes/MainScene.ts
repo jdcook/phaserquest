@@ -2,13 +2,10 @@ import * as Phaser from "phaser";
 import Player from "../entities/player";
 import PhaserBeam from "../attacks/phaserBeam";
 import BigBadGuy from "../entities/bigBadGuy";
+import SceneBase from "./SceneBase";
 
-export default class MainScene extends Phaser.Scene {
+export default class MainScene extends SceneBase {
     player: Player;
-    phaserBeam: PhaserBeam;
-    groundedEntityGroup: Phaser.GameObjects.Group;
-    flyingEntityGroup: Phaser.GameObjects.Group;
-    terrainGroup: Phaser.Physics.Arcade.StaticGroup;
 
     constructor() {
         super({
@@ -28,6 +25,8 @@ export default class MainScene extends Phaser.Scene {
     }
 
     public create(): void {
+        super.create();
+
         // animations
         this.anims.create({
             key: "left",
@@ -58,22 +57,12 @@ export default class MainScene extends Phaser.Scene {
             frameRate: 1,
         });
 
-        // physics setup
-        this.groundedEntityGroup = this.physics.add.group({ classType: Phaser.GameObjects.GameObject, runChildUpdate: true });
-        this.flyingEntityGroup = this.physics.add.group({ classType: Phaser.GameObjects.GameObject, runChildUpdate: true, allowGravity: false });
-        this.terrainGroup = this.physics.add.staticGroup();
-
-        this.physics.add.collider(this.groundedEntityGroup, this.terrainGroup);
-        this.physics.add.collider(this.flyingEntityGroup, this.terrainGroup);
-
         this.player = new Player(this);
-        this.groundedEntityGroup.add(this.player, true);
+        this.playerGroup.add(this.player, true);
 
-        this.phaserBeam = new PhaserBeam(this);
-        this.add.existing(this.phaserBeam);
-        this.player.setPhaserBeam(this.phaserBeam);
-
-        this.flyingEntityGroup.add(new BigBadGuy(this, 500, 100), true);
+        const bigBad = new BigBadGuy(this, 500, 100);
+        this.enemyGroup.add(bigBad, true);
+        bigBad.init();
 
         // level
         const tileSprite = this.add.tileSprite(0, 500, 10000, 32, "dirt");
