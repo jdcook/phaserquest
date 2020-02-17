@@ -1,9 +1,8 @@
 import { game } from "../main";
 import PhaserBeam from "../attacks/phaserBeam";
 import { DEPTH_VALUES } from "../constants";
-import MainScene from "../scenes/MainScene";
 
-export default class Player extends Phaser.Physics.Matter.Sprite {
+export default class Player extends Phaser.Physics.Arcade.Sprite {
     private arrowKeys: Phaser.Types.Input.Keyboard.CursorKeys;
     private keyW: Phaser.Input.Keyboard.Key;
     private keyA: Phaser.Input.Keyboard.Key;
@@ -17,17 +16,8 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
         this.phaserBeam = phaserBeam;
     }
 
-    constructor(scene: MainScene) {
-        super(scene.matter.world, 100, 100, "player", null, {
-            label: "player",
-            collisionFilter: {
-                category: scene.collisionGroupPlayer,
-                mask: scene.collisionGroupTerrain | scene.collisionGroupEnemyProjectiles,
-            },
-        });
-
-        this.setFixedRotation();
-
+    constructor(scene) {
+        super(scene, 100, 100, "player");
         this.depth = DEPTH_VALUES.PLAYER;
 
         this.arrowKeys = this.scene.input.keyboard.createCursorKeys();
@@ -41,10 +31,10 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
     update(time, delta): void {
         // left/right movement
         if (this.arrowKeys.left.isDown || this.keyA.isDown) {
-            this.setVelocityX(-5);
+            this.setVelocityX(-500);
             this.anims.play("left", true);
         } else if (this.arrowKeys.right.isDown || this.keyD.isDown) {
-            this.setVelocityX(5);
+            this.setVelocityX(500);
             this.anims.play("right", true);
         } else {
             this.setVelocityX(0);
@@ -56,9 +46,9 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
             this.jumpHoldCounter += delta;
         }
         if (this.arrowKeys.space.isUp || this.jumpHoldCounter > 96) {
-            // if (this.jumpHoldCounter > 0 && this.velocity.y <= 0 && this.body.touching.down) {
-            //     this.setVelocityY(Math.min(-400, -this.jumpHoldCounter * 8));
-            // }
+            if (this.jumpHoldCounter > 0 && this.body.velocity.y <= 0 && this.body.touching.down) {
+                this.setVelocityY(Math.min(-400, -this.jumpHoldCounter * 8));
+            }
             this.jumpHoldCounter = 0;
         }
 

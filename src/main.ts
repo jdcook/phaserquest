@@ -9,10 +9,10 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
         height: window.innerHeight,
     },
     physics: {
-        default: "matter",
-        matter: {
+        default: "arcade",
+        arcade: {
             debug: true,
-            gravity: { y: 2 },
+            gravity: { y: 2000 },
         },
     },
     parent: "game",
