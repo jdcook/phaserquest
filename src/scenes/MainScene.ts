@@ -11,6 +11,7 @@ export default class MainScene extends Phaser.Scene {
     collisionGroupEnemies: number;
     collisionGroupPlayerProjectiles: number;
     collisionGroupEnemyProjectiles: number;
+    updateEntityGroup: Phaser.GameObjects.Group;
 
     constructor() {
         super({
@@ -30,6 +31,8 @@ export default class MainScene extends Phaser.Scene {
     }
 
     public create(): void {
+        this.matter.world.update30Hz();
+
         // animations
         this.anims.create({
             key: "left",
@@ -61,26 +64,38 @@ export default class MainScene extends Phaser.Scene {
         });
 
         // physics setup
-
         this.collisionGroupTerrain = this.matter.world.nextCategory();
         this.collisionGroupPlayer = this.matter.world.nextCategory();
         this.collisionGroupEnemies = this.matter.world.nextCategory();
         this.collisionGroupPlayerProjectiles = this.matter.world.nextCategory();
         this.collisionGroupEnemyProjectiles = this.matter.world.nextCategory();
 
-        this.player = new Player(this.matter.world, this);
-        this.add.existing(this.player);
-        this.matter.world.add(this.player);
+        // entities
+        this.updateEntityGroup = this.add.group({ classType: Phaser.Physics.Matter.Sprite, runChildUpdate: true });
+
+        this.player = new Player(this);
+        this.updateEntityGroup.add(this.player, true);
 
         this.phaserBeam = new PhaserBeam(this);
         this.add.existing(this.phaserBeam);
         this.player.setPhaserBeam(this.phaserBeam);
-        /*
-        this.flyingEntityGroup.add(new BigBadGuy(this, 500, 100), true);
+
+        const baddie = new BigBadGuy(this, 500, 100);
+        this.updateEntityGroup.add(baddie, true);
 
         // level
-        const tileSprite = this.add.tileSprite(0, 500, 10000, 32, "dirt");
-        this.terrainGroup.add(tileSprite);*/
+        const ground = this.add.tileSprite(0, 500, 10000, 32, "dirt");
+        this.matter.add.gameObject(ground, {
+            isStatic: true,
+            collisionFilter: {
+                category: this.collisionGroupTerrain,
+                mask:
+                    this.collisionGroupEnemies |
+                    this.collisionGroupEnemyProjectiles |
+                    this.collisionGroupPlayer |
+                    this.collisionGroupPlayerProjectiles,
+            },
+        });
     }
 
     public update(): void {

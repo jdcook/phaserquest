@@ -17,13 +17,16 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
         this.phaserBeam = phaserBeam;
     }
 
-    constructor(world, scene: MainScene) {
-        super(world, 100, 100, "player", null, {
+    constructor(scene: MainScene) {
+        super(scene.matter.world, 100, 100, "player", null, {
+            label: "player",
             collisionFilter: {
                 category: scene.collisionGroupPlayer,
                 mask: scene.collisionGroupTerrain | scene.collisionGroupEnemyProjectiles,
             },
         });
+
+        this.setFixedRotation();
 
         this.depth = DEPTH_VALUES.PLAYER;
 
@@ -38,10 +41,10 @@ export default class Player extends Phaser.Physics.Matter.Sprite {
     update(time, delta): void {
         // left/right movement
         if (this.arrowKeys.left.isDown || this.keyA.isDown) {
-            this.setVelocityX(-500);
+            this.setVelocityX(-5);
             this.anims.play("left", true);
         } else if (this.arrowKeys.right.isDown || this.keyD.isDown) {
-            this.setVelocityX(500);
+            this.setVelocityX(5);
             this.anims.play("right", true);
         } else {
             this.setVelocityX(0);
