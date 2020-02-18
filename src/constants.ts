@@ -4,5 +4,6 @@ export const DEPTH_VALUES = {
     PROJECTILES: 30,
     PLAYER: 20,
     ENEMIES: 10,
-    TERRAIN: 0,
+    TERRAIN: 1,
+    BACKGROUND: 0,
 };

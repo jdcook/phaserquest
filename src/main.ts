@@ -5,8 +5,8 @@ const gameConfig: Phaser.Types.Core.GameConfig = {
     title: "Phaser Quest",
     type: Phaser.AUTO,
     scale: {
-        width: window.innerWidth,
-        height: window.innerHeight,
+        width: 800,
+        height: 600,
     },
     render: {
         pixelArt: true,

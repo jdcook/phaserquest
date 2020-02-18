@@ -3,6 +3,7 @@ import Player from "../entities/player";
 import PhaserBeam from "../attacks/phaserBeam";
 import BigBadGuy from "../entities/bigBadGuy";
 import SceneBase from "./SceneBase";
+import { DEPTH_VALUES } from "../constants";
 
 export default class MainScene extends SceneBase {
     player: Player;
@@ -31,6 +32,7 @@ export default class MainScene extends SceneBase {
 
         // level
         this.load.image("dirt", "assets/textures/dirt.png");
+        this.load.image("sky", "assets/textures/sky.png");
 
         // audio
         this.load.audio("audioPhaserBeam", ["assets/audio/phaser_beam.ogg", "assets/audio/phaser_beam.mp3"]);
@@ -84,6 +86,7 @@ export default class MainScene extends SceneBase {
             key: "bigbad_charging",
             frames: this.anims.generateFrameNumbers("bigBadGuy", { start: 9, end: 10 }),
             frameRate: 8,
+            repeat: -1,
         });
 
         this.anims.create({
@@ -107,7 +110,12 @@ export default class MainScene extends SceneBase {
         bigBad.initPhysics();
 
         // level
-        const tileSprite = this.add.tileSprite(0, 500, 10000, 32, "dirt");
+        this.add
+            .image(0, 0, "sky")
+            .setOrigin(0, 0)
+            .setDepth(DEPTH_VALUES.BACKGROUND);
+
+        const tileSprite = this.add.tileSprite(0, 584, 10000, 32, "dirt");
         this.terrainGroup.add(tileSprite);
     }
 }

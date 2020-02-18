@@ -3,6 +3,7 @@ import { Vector } from "matter";
 import { GameObjects } from "phaser";
 import { RaycastHitResult, RaycastHitResults } from "../types";
 import GreenBullet from "../attacks/greenBullet";
+import Bullet from "../attacks/bullet";
 
 /*
  * The scene object that all scene extend, handles common physics functionality
@@ -121,9 +122,9 @@ export default class SceneBase extends Phaser.Scene {
         return null;
     }
 
-    createExplosion(x: number, y: number): void {
+    createExplosion(x: number, y: number, scale: number): void {
         const explosion = this.add.sprite(x, y, "explosion");
-        explosion.setScale(2, 2);
+        explosion.setScale(scale, scale);
         explosion.anims.play("explode");
     }
 
@@ -131,5 +132,12 @@ export default class SceneBase extends Phaser.Scene {
         const bullet = new GreenBullet(this, x, y);
         this.enemyProjectilesGroup.add(bullet, true);
         bullet.initPhysics();
+    }
+
+    createBullet(x: number, y: number, xVel: number, yVel: number): void {
+        const bullet = new Bullet(this, x, y);
+        this.enemyProjectilesGroup.add(bullet, true);
+        bullet.initPhysics();
+        bullet.setVelocity(xVel, yVel);
     }
 }
