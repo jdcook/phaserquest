@@ -66,6 +66,7 @@ export default class BigBadGuy extends KillableEntity implements IPhysics {
                     }
                     this.currentState = BigBadGuyState.Paused;
                     this.stateCounter = 1000;
+                    this.anims.play("bigbad_idle");
                 }
                 break;
             case BigBadGuyState.Paused:

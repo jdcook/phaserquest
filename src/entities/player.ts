@@ -34,6 +34,8 @@ export default class Player extends KillableEntity {
     }
 
     update(time: number, delta: number): void {
+        const camera = this.scene.cameras.main;
+
         // left/right movement
         if (this.arrowKeys.left.isDown || this.keyA.isDown) {
             this.setVelocityX(-500);
@@ -45,6 +47,9 @@ export default class Player extends KillableEntity {
             this.setVelocityX(0);
             this.anims.play("turn", true);
         }
+
+        //this.scene.cameras.main.setPosition(this.x, this.y);
+        camera.scrollX = this.x - this.scene.game.scale.width / 2;
 
         // jumping - jump on release or after 96ms, jump height is determined by how long the button was held (smashbros-like)
         if (this.arrowKeys.space.isDown) {
@@ -60,7 +65,9 @@ export default class Player extends KillableEntity {
         // phaser
         if (this.phaserBeam) {
             if (this.scene.input.activePointer.isDown) {
-                this.phaserBeam.startFiring(new Phaser.Math.Vector2(this.x, this.y), this.scene.input.activePointer.position);
+                const pointer = this.scene.input.activePointer;
+                pointer.updateWorldPoint(camera);
+                this.phaserBeam.startFiring(new Phaser.Math.Vector2(this.x, this.y), new Phaser.Math.Vector2(pointer.worldX, pointer.worldY));
             } else {
                 this.phaserBeam.stopFiring();
             }
