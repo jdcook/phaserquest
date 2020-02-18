@@ -2,20 +2,43 @@ import Player from "../entities/player";
 import { Vector } from "matter";
 import { GameObjects } from "phaser";
 import { RaycastHitResult, RaycastHitResults } from "../types";
+import GreenBullet from "../attacks/greenBullet";
 
+/*
+ * The scene object that all scene extend, handles common physics functionality
+ */
 export default class SceneBase extends Phaser.Scene {
     playerGroup: Phaser.GameObjects.Group;
     enemyGroup: Phaser.GameObjects.Group;
+    enemyProjectilesGroup: Phaser.GameObjects.Group;
+    playerProjectilesGroup: Phaser.GameObjects.Group;
     terrainGroup: Phaser.Physics.Arcade.StaticGroup;
 
+    preload(): void {
+        this.load.spritesheet("explosion", "assets/textures/explosion.png", { frameWidth: 24, frameHeight: 24 });
+    }
+
     create(): void {
+        // animations
+        this.anims.create({
+            key: "explode",
+            frames: this.anims.generateFrameNumbers("explosion", { start: 0, end: 14 }),
+            frameRate: 40,
+            repeat: 0,
+        });
+
         // physics setup
         this.playerGroup = this.physics.add.group({ classType: Phaser.GameObjects.GameObject, runChildUpdate: true });
         this.enemyGroup = this.physics.add.group({ classType: Phaser.GameObjects.GameObject, runChildUpdate: true });
+        this.playerProjectilesGroup = this.physics.add.group({ classType: Phaser.GameObjects.GameObject, runChildUpdate: true });
+        this.enemyProjectilesGroup = this.physics.add.group({ classType: Phaser.GameObjects.GameObject, runChildUpdate: true });
         this.terrainGroup = this.physics.add.staticGroup();
 
         this.physics.add.collider(this.playerGroup, this.terrainGroup);
         this.physics.add.collider(this.enemyGroup, this.terrainGroup);
+        //this.physics.add.collider(this.enemyProjectilesGroup, this.terrainGroup);
+        //this.physics.add.overlap
+        this.physics.add.collider(this.playerProjectilesGroup, this.terrainGroup);
     }
 
     /*
@@ -96,5 +119,17 @@ export default class SceneBase extends Phaser.Scene {
         }
 
         return null;
+    }
+
+    createExplosion(x: number, y: number): void {
+        const explosion = this.add.sprite(x, y, "explosion");
+        explosion.setScale(2, 2);
+        explosion.anims.play("explode");
+    }
+
+    createGreenBullet(x: number, y: number): void {
+        const bullet = new GreenBullet(this, x, y);
+        this.enemyProjectilesGroup.add(bullet, true);
+        bullet.initPhysics();
     }
 }

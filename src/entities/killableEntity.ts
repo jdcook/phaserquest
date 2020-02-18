@@ -2,8 +2,9 @@ import SceneBase from "../scenes/SceneBase";
 
 export default class KillableEntity extends Phaser.Physics.Arcade.Sprite {
     private readonly COLOR_WHITE: number = 0xffffff;
+    protected gameScene: SceneBase;
     private health: number;
-    private flashCounter: number;
+    private flashCounter: number = 0;
     private flashColor: number;
     private flashMillis: number;
 
@@ -13,6 +14,7 @@ export default class KillableEntity extends Phaser.Physics.Arcade.Sprite {
 
     constructor(scene: SceneBase, x: number, y: number, texture: string, maxHealth: number) {
         super(scene, x, y, texture);
+        this.gameScene = scene;
         this.health = maxHealth;
     }
 
@@ -41,7 +43,7 @@ export default class KillableEntity extends Phaser.Physics.Arcade.Sprite {
     }
 
     flashTint(colorHex: number, flashMillis: number, ignoreIfFlashing: boolean): void {
-        if (!this.flashCounter || this.flashCounter <= 0) {
+        if (this.flashCounter <= 0) {
             this.setTint(colorHex);
             this.flashMillis = flashMillis;
             this.flashCounter = flashMillis;

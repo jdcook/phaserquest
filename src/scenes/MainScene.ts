@@ -15,10 +15,11 @@ export default class MainScene extends SceneBase {
         });
     }
 
-    public preload(): void {
+    preload(): void {
+        super.preload();
         // entities
         this.load.spritesheet("player", "assets/textures/dude.png", { frameWidth: 32, frameHeight: 48 });
-        this.load.spritesheet("bigBadGuy", "assets/textures/big_bad_guy.png", { frameWidth: 137, frameHeight: 53 });
+        this.load.spritesheet("bigBadGuy", "assets/textures/big_bad_guy.png", { frameWidth: 137, frameHeight: 54 });
 
         // projectiles
         this.load.image("phaserBeam", "assets/textures/phaser_beam.png");
@@ -35,7 +36,7 @@ export default class MainScene extends SceneBase {
         this.load.audio("audioPhaserBeam", ["assets/audio/phaser_beam.ogg", "assets/audio/phaser_beam.mp3"]);
     }
 
-    public create(): void {
+    create(): void {
         super.create();
 
         // animations
@@ -58,24 +59,41 @@ export default class MainScene extends SceneBase {
         });
 
         this.anims.create({
-            key: "idle",
+            key: "bigbad_idle",
             frames: [{ key: "bigBadGuy", frame: 0 }],
             frameRate: 1,
         });
         this.anims.create({
-            key: "destroyed",
+            key: "bigbad_shootLeft",
+            frames: this.anims.generateFrameNumbers("bigBadGuy", { start: 0, end: 3 }),
+            frameRate: 20,
+            repeat: 0,
+        });
+        this.anims.create({
+            key: "bigbad_shootRight",
+            frames: this.anims.generateFrameNumbers("bigBadGuy", { start: 4, end: 7 }),
+            frameRate: 20,
+            repeat: 0,
+        });
+        this.anims.create({
+            key: "bigbad_destroyed",
             frames: [{ key: "bigBadGuy", frame: 1 }],
-            frameRate: 1,
+            frameRate: 8,
+        });
+        this.anims.create({
+            key: "bigbad_charging",
+            frames: this.anims.generateFrameNumbers("bigBadGuy", { start: 9, end: 10 }),
+            frameRate: 8,
         });
 
         this.anims.create({
-            key: "idle",
+            key: "bulletIdle",
             frames: this.anims.generateFrameNumbers("bullet", { start: 0, end: 2 }),
             frameRate: 10,
             repeat: -1,
         });
         this.anims.create({
-            key: "idle",
+            key: "greenBulletIdle",
             frames: this.anims.generateFrameNumbers("greenBullet", { start: 0, end: 2 }),
             frameRate: 10,
             repeat: -1,
@@ -86,14 +104,10 @@ export default class MainScene extends SceneBase {
 
         const bigBad = new BigBadGuy(this, 500, 100);
         this.enemyGroup.add(bigBad, true);
-        bigBad.init();
+        bigBad.initPhysics();
 
         // level
         const tileSprite = this.add.tileSprite(0, 500, 10000, 32, "dirt");
         this.terrainGroup.add(tileSprite);
-    }
-
-    public update(): void {
-        // todo
     }
 }

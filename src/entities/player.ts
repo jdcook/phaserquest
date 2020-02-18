@@ -46,7 +46,7 @@ export default class Player extends KillableEntity {
             this.anims.play("turn", true);
         }
 
-        // jumping - velocity calculated with jumpsquat (smashbros-like)
+        // jumping - jump on release or after 96ms, jump height is determined by how long the button was held (smashbros-like)
         if (this.arrowKeys.space.isDown) {
             this.jumpHoldCounter += delta;
         }
