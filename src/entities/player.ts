@@ -23,7 +23,6 @@ export default class Player extends KillableEntity {
         this.depth = DEPTH_VALUES.PLAYER;
 
         this.arrowKeys = this.scene.input.keyboard.createCursorKeys();
-        this.scene.input.keyboard.createCombo;
         this.keyW = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
         this.keyA = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
         this.keyS = this.scene.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
@@ -72,5 +71,11 @@ export default class Player extends KillableEntity {
                 this.phaserBeam.stopFiring();
             }
         }
+    }
+
+    die() {
+        this.phaserBeam.stopFiring();
+        this.phaserBeam.destroy();
+        super.die();
     }
 }

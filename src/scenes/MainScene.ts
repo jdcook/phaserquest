@@ -35,39 +35,12 @@ export default class MainScene extends SceneBase {
 
         // audio
         this.load.audio("audioPhaserBeam", ["assets/audio/phaser_beam.ogg", "assets/audio/phaser_beam.mp3"]);
+        this.load.audio("audioSingleShot", ["assets/audio/single_shot.ogg", "assets/audio/single_shot.mp3"]);
+        this.load.audio("audioMultiShot", ["assets/audio/multi_shot.ogg", "assets/audio/multi_shot.mp3"]);
     }
 
     create(): void {
         super.create();
-
-        this.anims.create({
-            key: "bigbad_idle",
-            frames: [{ key: "bigBadGuy", frame: 0 }],
-            frameRate: 1,
-        });
-        this.anims.create({
-            key: "bigbad_shootLeft",
-            frames: this.anims.generateFrameNumbers("bigBadGuy", { start: 0, end: 3 }),
-            frameRate: 20,
-            repeat: 0,
-        });
-        this.anims.create({
-            key: "bigbad_shootRight",
-            frames: this.anims.generateFrameNumbers("bigBadGuy", { start: 4, end: 7 }),
-            frameRate: 20,
-            repeat: 0,
-        });
-        this.anims.create({
-            key: "bigbad_destroyed",
-            frames: [{ key: "bigBadGuy", frame: 1 }],
-            frameRate: 8,
-        });
-        this.anims.create({
-            key: "bigbad_charging",
-            frames: this.anims.generateFrameNumbers("bigBadGuy", { start: 9, end: 10 }),
-            frameRate: 8,
-            repeat: -1,
-        });
 
         this.anims.create({
             key: "bulletIdle",
@@ -110,6 +83,10 @@ export default class MainScene extends SceneBase {
         this.enemyGroup.add(bigBad, true);
         bigBad.initPhysics();
 
+        const bigBad2 = new BigBadGuy(this, 0, 100);
+        this.enemyGroup.add(bigBad2, true);
+        bigBad2.initPhysics();
+
         // level
         const background = this.add.tileSprite(-5000, 0, 10000, 600, "sky");
         background.setOrigin(0, 0);
@@ -123,7 +100,7 @@ export default class MainScene extends SceneBase {
         this.terrainGroup.add(wallRight);
 
         const tower = new Tower(this, 400, 520);
-        this.playerGroup.add(tower, true);
+        this.levelBodilessGroup.add(tower, true);
         tower.initPhysics();
     }
 }

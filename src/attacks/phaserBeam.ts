@@ -69,7 +69,7 @@ export default class PhaserBeam extends Phaser.GameObjects.Sprite {
             particleManager.depth = DEPTH_VALUES.PARTICLES;
             this.particles = particleManager.createEmitter({
                 blendMode: "ADD",
-                frequency: 100,
+                frequency: 50,
                 gravityY: 0,
                 lifespan: { min: 200, max: 1000 },
                 quantity: 1,

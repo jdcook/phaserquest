@@ -16,6 +16,7 @@ export default class SceneBase extends Phaser.Scene {
     enemyProjectilesGroup: Phaser.GameObjects.Group;
     playerProjectilesGroup: Phaser.GameObjects.Group;
     terrainGroup: Phaser.Physics.Arcade.StaticGroup;
+    levelBodilessGroup: Phaser.GameObjects.Group;
 
     preload(): void {
         this.load.spritesheet("player", "assets/textures/dude.png", { frameWidth: 32, frameHeight: 48 });
@@ -55,6 +56,7 @@ export default class SceneBase extends Phaser.Scene {
         this.playerProjectilesGroup = this.physics.add.group({ classType: Phaser.GameObjects.GameObject, runChildUpdate: true });
         this.enemyProjectilesGroup = this.physics.add.group({ classType: Phaser.GameObjects.GameObject, runChildUpdate: true });
         this.terrainGroup = this.physics.add.staticGroup();
+        this.levelBodilessGroup = this.add.group({ classType: Phaser.GameObjects.GameObject, runChildUpdate: true });
 
         this.physics.add.collider(this.playerGroup, this.terrainGroup);
         this.physics.add.collider(this.enemyGroup, this.terrainGroup);
