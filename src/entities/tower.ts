@@ -1,6 +1,6 @@
+import { DEPTH_VALUES } from "../constants";
 import SceneBase from "../scenes/SceneBase";
 import IPhysics from "./IPhysics";
-import { DEPTH_VALUES } from "../constants";
 
 export default class Tower extends Phaser.Physics.Arcade.Sprite implements IPhysics {
     private readonly ACTIVATE_RADIUS: number = 150;
@@ -14,9 +14,7 @@ export default class Tower extends Phaser.Physics.Arcade.Sprite implements IPhys
         this.depth = DEPTH_VALUES.FOREGROUND;
     }
 
-    initPhysics(): void {
-        //(this.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
-    }
+    initPhysics(): void {}
 
     update(time: number, delta: number): void {
         if (!this.activated) {

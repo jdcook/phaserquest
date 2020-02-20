@@ -1,8 +1,7 @@
-import Player from "../entities/player";
-import { GameObjects } from "phaser";
-import { RaycastHitResult, RaycastHitResults } from "../types";
-import GreenBullet from "../attacks/greenBullet";
 import Bullet from "../attacks/bullet";
+import GreenBullet from "../attacks/greenBullet";
+import Player from "../entities/player";
+import { RaycastHitResult, RaycastHitResults } from "../types";
 
 /*
  * The scene object that all scene extend, handles common physics functionality
@@ -59,8 +58,8 @@ export default class SceneBase extends Phaser.Scene {
 
         this.physics.add.collider(this.playerGroup, this.terrainGroup);
         this.physics.add.collider(this.enemyGroup, this.terrainGroup);
-        //this.physics.add.collider(this.enemyProjectilesGroup, this.terrainGroup);
-        //this.physics.add.overlap
+        // this.physics.add.collider(this.enemyProjectilesGroup, this.terrainGroup);
+        // this.physics.add.overlap
         this.physics.add.collider(this.playerProjectilesGroup, this.terrainGroup);
 
         this.player = new Player(this);

@@ -1,7 +1,7 @@
-import SceneBase from "../scenes/SceneBase";
-import KillableEntity from "../entities/killableEntity";
-import IPhysics from "../entities/IPhysics";
 import { DEPTH_VALUES } from "../constants";
+import IPhysics from "../entities/IPhysics";
+import KillableEntity from "../entities/killableEntity";
+import SceneBase from "../scenes/SceneBase";
 
 export default class Bullet extends Phaser.Physics.Arcade.Sprite implements IPhysics {
     private gameScene: SceneBase;

@@ -1,4 +1,3 @@
-import { game } from "../main";
 import PhaserBeam from "../attacks/phaserBeam";
 import { DEPTH_VALUES } from "../constants";
 import SceneBase from "../scenes/SceneBase";
@@ -14,7 +13,7 @@ export default class Player extends KillableEntity {
     private jumpHoldCounter: number = 0;
     private phaserBeam: PhaserBeam;
 
-    setPhaserBeam(phaserBeam: PhaserBeam) {
+    setPhaserBeam(phaserBeam: PhaserBeam): void {
         this.phaserBeam = phaserBeam;
     }
 
@@ -47,7 +46,7 @@ export default class Player extends KillableEntity {
             this.anims.play("turn", true);
         }
 
-        //this.scene.cameras.main.setPosition(this.x, this.y);
+        // this.scene.cameras.main.setPosition(this.x, this.y);
         camera.scrollX = this.x - this.scene.game.scale.width / 2;
 
         // jumping - jump on release or after 96ms, jump height is determined by how long the button was held (smashbros-like)
@@ -73,7 +72,7 @@ export default class Player extends KillableEntity {
         }
     }
 
-    die() {
+    die(): void {
         this.phaserBeam.stopFiring();
         this.phaserBeam.destroy();
         super.die();

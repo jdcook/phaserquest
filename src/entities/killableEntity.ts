@@ -31,7 +31,7 @@ export default class KillableEntity extends Phaser.Physics.Arcade.Sprite {
         }
     }
 
-    damage(amount: number) {
+    damage(amount: number): void {
         this.health -= amount;
         if (this.health <= 0) {
             this.die();
@@ -43,7 +43,7 @@ export default class KillableEntity extends Phaser.Physics.Arcade.Sprite {
     }
 
     flashTint(colorHex: number, flashMillis: number, ignoreIfFlashing: boolean): void {
-        if (this.flashCounter <= 0) {
+        if (this.flashCounter <= 0 || !ignoreIfFlashing) {
             this.setTint(colorHex);
             this.flashMillis = flashMillis;
             this.flashCounter = flashMillis;

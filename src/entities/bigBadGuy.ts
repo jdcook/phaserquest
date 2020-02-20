@@ -1,7 +1,7 @@
-import SceneBase from "../scenes/SceneBase";
-import KillableEntity from "./killableEntity";
-import IPhysics from "./IPhysics";
 import { DEPTH_VALUES } from "../constants";
+import SceneBase from "../scenes/SceneBase";
+import IPhysics from "./IPhysics";
+import KillableEntity from "./killableEntity";
 
 enum BigBadGuyState {
     Strafing,

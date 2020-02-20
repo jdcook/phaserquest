@@ -15,5 +15,8 @@ module.exports = {
         "@typescript-eslint/no-inferrable-types": "off",
         "spaced-comment": "warn",
         curly: "warn",
+        "@typescript-eslint/no-empty-function": "off",
+        "@typescript-eslint/interface-name-prefix": "off",
+        "@typescript-eslint/no-unused-vars": ["warn", { args: "none" }],
     },
 };

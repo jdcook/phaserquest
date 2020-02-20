@@ -1,6 +1,6 @@
 import { DEPTH_VALUES } from "../constants";
-import SceneBase from "../scenes/SceneBase";
 import KillableEntity from "../entities/killableEntity";
+import SceneBase from "../scenes/SceneBase";
 
 export default class PhaserBeam extends Phaser.GameObjects.Sprite {
     private readonly SCALE: number = 2;
