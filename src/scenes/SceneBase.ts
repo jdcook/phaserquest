@@ -1,5 +1,4 @@
 import Player from "../entities/player";
-import { Vector } from "matter";
 import { GameObjects } from "phaser";
 import { RaycastHitResult, RaycastHitResults } from "../types";
 import GreenBullet from "../attacks/greenBullet";
@@ -77,9 +76,9 @@ export default class SceneBase extends Phaser.Scene {
         const lineC = new Phaser.Geom.Line(x2, y2, x1, y2);
         const lineD = new Phaser.Geom.Line(x1, y2, x1, y1);
 
-        var output = [new Phaser.Geom.Point(), new Phaser.Geom.Point(), new Phaser.Geom.Point(), new Phaser.Geom.Point()];
+        const output = [new Phaser.Geom.Point(), new Phaser.Geom.Point(), new Phaser.Geom.Point(), new Phaser.Geom.Point()];
 
-        var result = [
+        const result = [
             Phaser.Geom.Intersects.LineToLine(lineA, line, output[0]),
             Phaser.Geom.Intersects.LineToLine(lineB, line, output[1]),
             Phaser.Geom.Intersects.LineToLine(lineC, line, output[2]),
@@ -87,7 +86,7 @@ export default class SceneBase extends Phaser.Scene {
         ];
 
         const retVectors = [];
-        for (var i = 0; i < 4; i++) {
+        for (let i = 0; i < 4; i++) {
             if (result[i]) {
                 retVectors.push(new Phaser.Math.Vector2(output[i].x, output[i].y));
             }

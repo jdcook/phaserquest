@@ -1,4 +1,4 @@
-const path = require("path");
+import * as path from "path";
 
 module.exports = {
     entry: "./src/main.ts",
@@ -11,6 +11,13 @@ module.exports = {
     },
     module: {
         rules: [
+            {
+                enforce: "pre",
+                test: /\.(tsx?)$/,
+                exclude: /node_modules/,
+                loader: "eslint-loader",
+                options: {},
+            },
             {
                 test: /\.(tsx?)$/,
                 exclude: /node_modules/,

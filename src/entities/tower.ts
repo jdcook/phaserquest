@@ -1,5 +1,4 @@
 import SceneBase from "../scenes/SceneBase";
-import Player from "./player";
 import IPhysics from "./IPhysics";
 import { DEPTH_VALUES } from "../constants";
 

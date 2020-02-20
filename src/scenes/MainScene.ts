@@ -21,7 +21,7 @@ export default class MainScene extends SceneBase {
         this.load.spritesheet("bigBadGuy", "assets/textures/big_bad_guy.png", { frameWidth: 137, frameHeight: 54 });
         this.load.spritesheet("tower", "assets/textures/tower.png", { frameWidth: 25, frameHeight: 56 });
 
-        // projectiles
+        //projectiles
         this.load.image("phaserBeam", "assets/textures/phaser_beam.png");
         this.load.spritesheet("bullet", "assets/textures/bullet.png", { frameWidth: 7, frameHeight: 7 });
         this.load.spritesheet("greenBullet", "assets/textures/green_bullet.png", { frameWidth: 12, frameHeight: 28 });
