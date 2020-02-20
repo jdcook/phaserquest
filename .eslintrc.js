@@ -10,13 +10,20 @@ module.exports = {
         sourceType: "module", // Allows for the use of imports
     },
     rules: {
-        // Place to specify ESLint rules. Can be used to overwrite rules specified from the extended configs
-        // e.g. "@typescript-eslint/explicit-function-return-type": "off",
         "@typescript-eslint/no-inferrable-types": "off",
         "spaced-comment": "warn",
         curly: "warn",
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/interface-name-prefix": "off",
         "@typescript-eslint/no-unused-vars": ["warn", { args: "none" }],
+        "@typescript-eslint/no-magic-numbers": [
+            "warn",
+            {
+                ignoreNumericLiteralTypes: true,
+                ignoreReadonlyClassProperties: true,
+                ignoreEnums: true,
+                ignoreArrayIndexes: true,
+            },
+        ],
     },
 };
