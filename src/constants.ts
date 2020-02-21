@@ -7,3 +7,8 @@ export const DEPTH_VALUES = {
     TERRAIN: 1,
     BACKGROUND: 0,
 };
+
+export const ORIGIN_TOPLEFT = {
+    x: 0,
+    y: 0,
+};

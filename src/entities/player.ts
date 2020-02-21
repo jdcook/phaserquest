@@ -4,6 +4,11 @@ import SceneBase from "../scenes/SceneBase";
 import KillableEntity from "./killableEntity";
 
 export default class Player extends KillableEntity {
+    private readonly SPAWN = {
+        x: 100,
+        y: 100,
+    };
+
     private arrowKeys: Phaser.Types.Input.Keyboard.CursorKeys;
     private keyW: Phaser.Input.Keyboard.Key;
     private keyA: Phaser.Input.Keyboard.Key;
@@ -17,8 +22,10 @@ export default class Player extends KillableEntity {
         this.phaserBeam = phaserBeam;
     }
 
-    constructor(scene: SceneBase) {
-        super(scene, 100, 100, "player", 100);
+    constructor(scene: SceneBase, x: number, y: number) {
+        super(scene, x, y, "player");
+        this.health = 100;
+
         this.depth = DEPTH_VALUES.PLAYER;
 
         this.arrowKeys = this.scene.input.keyboard.createCursorKeys();

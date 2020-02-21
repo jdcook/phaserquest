@@ -19,6 +19,7 @@ module.exports = {
         "@typescript-eslint/no-magic-numbers": [
             "warn",
             {
+                ignore: [0, 2, 0.5],
                 ignoreNumericLiteralTypes: true,
                 ignoreReadonlyClassProperties: true,
                 ignoreEnums: true,

@@ -62,7 +62,7 @@ export default class SceneBase extends Phaser.Scene {
         // this.physics.add.overlap
         this.physics.add.collider(this.playerProjectilesGroup, this.terrainGroup);
 
-        this.player = new Player(this);
+        this.player = new Player(this, 100, 100);
         this.playerGroup.add(this.player, true);
     }
 
@@ -85,7 +85,7 @@ export default class SceneBase extends Phaser.Scene {
         ];
 
         const retVectors = [];
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < result.length; i++) {
             if (result[i]) {
                 retVectors.push(new Phaser.Math.Vector2(output[i].x, output[i].y));
             }
