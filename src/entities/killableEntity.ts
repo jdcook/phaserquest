@@ -1,7 +1,7 @@
+import { COLORS } from "../constants";
 import SceneBase from "../scenes/SceneBase";
 
 export default class KillableEntity extends Phaser.Physics.Arcade.Sprite {
-    private readonly COLOR_WHITE: number = 0xffffff;
     protected gameScene: SceneBase;
     protected health: number;
     private flashCounter: number = 0;
@@ -26,7 +26,7 @@ export default class KillableEntity extends Phaser.Physics.Arcade.Sprite {
                 this.flashCounter = 0;
                 this.clearTint();
             } else {
-                this.setTint(Phaser.Math.Linear(this.flashColor, this.COLOR_WHITE, 1 - this.flashCounter / this.flashMillis));
+                this.setTint(Phaser.Math.Linear(this.flashColor, COLORS.WHITE, 1 - this.flashCounter / this.flashMillis));
             }
         }
     }

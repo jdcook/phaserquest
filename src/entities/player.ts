@@ -4,10 +4,10 @@ import SceneBase from "../scenes/SceneBase";
 import KillableEntity from "./killableEntity";
 
 export default class Player extends KillableEntity {
-    private readonly SPAWN = {
-        x: 100,
-        y: 100,
-    };
+    private readonly SPEED = 500;
+    private readonly MIN_JUMP_VEL = 400;
+    private readonly MAX_JUMPSQUAT_MILLIS = 96;
+    private readonly JUMP_MILLIS_TO_VEL_MULT = 8;
 
     private arrowKeys: Phaser.Types.Input.Keyboard.CursorKeys;
     private keyW: Phaser.Input.Keyboard.Key;
@@ -43,10 +43,10 @@ export default class Player extends KillableEntity {
 
         // left/right movement
         if (this.arrowKeys.left.isDown || this.keyA.isDown) {
-            this.setVelocityX(-500);
+            this.setVelocityX(-this.SPEED);
             this.anims.play("left", true);
         } else if (this.arrowKeys.right.isDown || this.keyD.isDown) {
-            this.setVelocityX(500);
+            this.setVelocityX(this.SPEED);
             this.anims.play("right", true);
         } else {
             this.setVelocityX(0);
@@ -60,9 +60,9 @@ export default class Player extends KillableEntity {
         if (this.arrowKeys.space.isDown) {
             this.jumpHoldCounter += delta;
         }
-        if (this.arrowKeys.space.isUp || this.jumpHoldCounter > 96) {
+        if (this.arrowKeys.space.isUp || this.jumpHoldCounter > this.MAX_JUMPSQUAT_MILLIS) {
             if (this.jumpHoldCounter > 0 && this.body.velocity.y <= 0 && this.body.touching.down) {
-                this.setVelocityY(Math.min(-400, -this.jumpHoldCounter * 8));
+                this.setVelocityY(Math.min(-this.MIN_JUMP_VEL, -this.jumpHoldCounter * this.JUMP_MILLIS_TO_VEL_MULT));
             }
             this.jumpHoldCounter = 0;
         }

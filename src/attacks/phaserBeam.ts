@@ -22,7 +22,7 @@ export default class PhaserBeam extends Phaser.GameObjects.Sprite {
             loop: true,
         });
 
-        this.raycastLine = new Phaser.Geom.Line(0, 0, 1000, 1000);
+        this.raycastLine = new Phaser.Geom.Line();
     }
 
     startFiring(startPosition: Phaser.Math.Vector2, cursorPosition: Phaser.Math.Vector2): void {

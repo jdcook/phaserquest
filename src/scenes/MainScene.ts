@@ -1,5 +1,6 @@
 import { DEPTH_VALUES } from "../constants";
 import BigBadGuy from "../entities/bigBadGuy";
+import Player from "../entities/player";
 import Tower from "../entities/tower";
 import SceneBase from "./SceneBase";
 
@@ -11,15 +12,13 @@ export default class MainScene extends SceneBase {
         height: 600,
         centerX: 0,
     };
-    readonly ENEMY_SPAWNS = {
+    readonly SPAWNS = {
         bigBadGuys: [
             { x: 500, y: 100 },
             { x: 0, y: 100 },
         ],
-    };
-    readonly TOWER_SPAWN = {
-        x: 400,
-        y: 520,
+        tower: { x: 400, y: 520 },
+        player: { x: 100, y: 100 },
     };
     readonly DIRT_SIZE = 32;
     readonly WALL_HEIGHT = 2000;
@@ -35,6 +34,7 @@ export default class MainScene extends SceneBase {
     preload(): void {
         super.preload();
         // entities
+        this.load.spritesheet("player", "assets/textures/dude.png", { frameWidth: 32, frameHeight: 48 });
         this.load.spritesheet("bigBadGuy", "assets/textures/big_bad_guy.png", { frameWidth: 137, frameHeight: 54 });
         this.load.spritesheet("tower", "assets/textures/tower.png", { frameWidth: 25, frameHeight: 56 });
 
@@ -58,6 +58,25 @@ export default class MainScene extends SceneBase {
 
     create(): void {
         super.create();
+
+        // #region animations
+        this.anims.create({
+            key: "left",
+            frames: this.anims.generateFrameNumbers("player", { start: 0, end: 3 }),
+            frameRate: 10,
+            repeat: -1,
+        });
+        this.anims.create({
+            key: "turn",
+            frames: [{ key: "player", frame: 4 }],
+            frameRate: 20,
+        });
+        this.anims.create({
+            key: "right",
+            frames: this.anims.generateFrameNumbers("player", { start: 5, end: 8 }),
+            frameRate: 10,
+            repeat: -1,
+        });
 
         this.anims.create({
             key: "bulletIdle",
@@ -95,12 +114,17 @@ export default class MainScene extends SceneBase {
             frameRate: 10,
             repeat: -1,
         });
+        // #endregion
 
-        const bigBad = new BigBadGuy(this, this.ENEMY_SPAWNS.bigBadGuys[0].x, this.ENEMY_SPAWNS.bigBadGuys[0].y);
+        // entities
+        this.player = new Player(this, this.SPAWNS.player.x, this.SPAWNS.player.y);
+        this.playerGroup.add(this.player, true);
+
+        const bigBad = new BigBadGuy(this, this.SPAWNS.bigBadGuys[0].x, this.SPAWNS.bigBadGuys[0].y);
         this.enemyGroup.add(bigBad, true);
         bigBad.initPhysics();
 
-        const bigBad2 = new BigBadGuy(this, this.ENEMY_SPAWNS.bigBadGuys[1].x, this.ENEMY_SPAWNS.bigBadGuys[1].y);
+        const bigBad2 = new BigBadGuy(this, this.SPAWNS.bigBadGuys[1].x, this.SPAWNS.bigBadGuys[1].y);
         this.enemyGroup.add(bigBad2, true);
         bigBad2.initPhysics();
 
@@ -128,7 +152,7 @@ export default class MainScene extends SceneBase {
         );
         this.terrainGroup.add(wallRight);
 
-        const tower = new Tower(this, this.TOWER_SPAWN.x, this.TOWER_SPAWN.y);
+        const tower = new Tower(this, this.SPAWNS.tower.x, this.SPAWNS.tower.y);
         this.levelBodilessGroup.add(tower, true);
         tower.initPhysics();
     }

@@ -4,6 +4,7 @@ import KillableEntity from "../entities/killableEntity";
 import SceneBase from "../scenes/SceneBase";
 
 export default class Bullet extends Phaser.Physics.Arcade.Sprite implements IPhysics {
+    private readonly DAMAGE = 5;
     private gameScene: SceneBase;
     private hitEntityHandler: ArcadePhysicsCallback;
 
@@ -31,7 +32,7 @@ export default class Bullet extends Phaser.Physics.Arcade.Sprite implements IPhy
         this.gameScene.createExplosion(this.x, this.y, 1);
 
         if (other instanceof KillableEntity) {
-            (other as KillableEntity).damage(5);
+            (other as KillableEntity).damage(this.DAMAGE);
         }
 
         this.destroy();

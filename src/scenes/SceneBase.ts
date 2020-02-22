@@ -17,30 +17,11 @@ export default class SceneBase extends Phaser.Scene {
     levelBodilessGroup: Phaser.GameObjects.Group;
 
     preload(): void {
-        this.load.spritesheet("player", "assets/textures/dude.png", { frameWidth: 32, frameHeight: 48 });
         this.load.spritesheet("explosion", "assets/textures/explosion.png", { frameWidth: 24, frameHeight: 24 });
     }
 
     create(): void {
         // animations
-        // animations
-        this.anims.create({
-            key: "left",
-            frames: this.anims.generateFrameNumbers("player", { start: 0, end: 3 }),
-            frameRate: 10,
-            repeat: -1,
-        });
-        this.anims.create({
-            key: "turn",
-            frames: [{ key: "player", frame: 4 }],
-            frameRate: 20,
-        });
-        this.anims.create({
-            key: "right",
-            frames: this.anims.generateFrameNumbers("player", { start: 5, end: 8 }),
-            frameRate: 10,
-            repeat: -1,
-        });
         this.anims.create({
             key: "explode",
             frames: this.anims.generateFrameNumbers("explosion", { start: 0, end: 14 }),
@@ -61,9 +42,6 @@ export default class SceneBase extends Phaser.Scene {
         // this.physics.add.collider(this.enemyProjectilesGroup, this.terrainGroup);
         // this.physics.add.overlap
         this.physics.add.collider(this.playerProjectilesGroup, this.terrainGroup);
-
-        this.player = new Player(this, 100, 100);
-        this.playerGroup.add(this.player, true);
     }
 
     /*

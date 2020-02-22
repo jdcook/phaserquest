@@ -12,3 +12,8 @@ export const ORIGIN_TOPLEFT = {
     x: 0,
     y: 0,
 };
+
+export const COLORS = {
+    WHITE: 0xffffff,
+    RED: 0xff0000,
+};

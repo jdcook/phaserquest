@@ -1,4 +1,4 @@
-import { DEPTH_VALUES } from "../constants";
+import { COLORS, DEPTH_VALUES } from "../constants";
 import SceneBase from "../scenes/SceneBase";
 import IPhysics from "./IPhysics";
 import KillableEntity from "./killableEntity";
@@ -10,17 +10,34 @@ enum BigBadGuyState {
 }
 
 export default class BigBadGuy extends KillableEntity implements IPhysics {
+    private readonly BULLET_OFFSET = {
+        x: 60,
+        y: 30,
+    };
+    private readonly MIN_STRAFE_MILLIS = 1000;
+    private readonly MAX_STRAFE_MILLIS = 5000;
+    private readonly SHOOT_INTERVAL = 600;
+    private readonly MOVE_TIME_MULT = 0.001;
+    private readonly MOVE_SIN_AMPLITUDE = 100;
+    private readonly BULLET_SPRAY_NUM = 10;
+    private readonly BULLET_SPRAY_ANGLE = Math.PI / 2;
+    private readonly ANGLE_DOWN = Math.PI * (3 / 2);
+    private readonly BULLET_SPRAY_ANGLE_OFFSET = this.ANGLE_DOWN - this.BULLET_SPRAY_ANGLE / 2;
+    private readonly BULLET_SPRAY_SPEED = 500;
+    private readonly FLASH_MILLIS = 250;
+
     private moveCounter: number = 0;
     private originalPos = { x: 0, y: 0 };
-    private shootCounter: number = 600;
+    private shootCounter: number;
     private shootFromLeft: boolean;
     private currentState: BigBadGuyState = BigBadGuyState.Strafing;
-    private stateCounter: number = 5000;
+    private stateCounter: number;
     private audioSingleShot: Phaser.Sound.BaseSound;
     private audioMultiShot: Phaser.Sound.BaseSound;
 
     constructor(scene: SceneBase, x: number, y: number) {
-        super(scene, x, y, "bigBadGuy", 500);
+        super(scene, x, y, "bigBadGuy");
+        this.health = 500;
         this.originalPos.x = x;
         this.originalPos.y = y;
         this.depth = DEPTH_VALUES.ENEMIES;
@@ -57,7 +74,8 @@ export default class BigBadGuy extends KillableEntity implements IPhysics {
             repeat: -1,
         });
 
-        this.stateCounter = Phaser.Math.Between(1000, 5000);
+        this.stateCounter = Phaser.Math.Between(this.MIN_STRAFE_MILLIS, this.MAX_STRAFE_MILLIS);
+        this.shootCounter = this.SHOOT_INTERVAL;
     }
 
     initPhysics(): void {
@@ -74,17 +92,20 @@ export default class BigBadGuy extends KillableEntity implements IPhysics {
                     this.anims.play("bigbad_charging");
                     this.stateCounter = 1000;
                 } else {
-                    this.moveCounter += delta * 0.001;
-                    this.setPosition(this.originalPos.x + Math.sin(this.moveCounter) * 100, this.originalPos.y);
+                    this.moveCounter += delta;
+                    this.setPosition(
+                        this.originalPos.x + Math.sin(this.moveCounter * this.MOVE_TIME_MULT) * this.MOVE_SIN_AMPLITUDE,
+                        this.originalPos.y
+                    );
 
                     this.shootCounter -= delta;
                     if (this.shootCounter <= 0) {
                         this.audioSingleShot.play({ volume: 0.25 });
                         if (this.shootFromLeft) {
-                            this.gameScene.createGreenBullet(this.x - 60, this.y + 30);
+                            this.gameScene.createGreenBullet(this.x - this.BULLET_OFFSET.x, this.y + this.BULLET_OFFSET.y);
                             this.anims.play("bigbad_shootLeft");
                         } else {
-                            this.gameScene.createGreenBullet(this.x + 60, this.y + 30);
+                            this.gameScene.createGreenBullet(this.x + this.BULLET_OFFSET.x, this.y + this.BULLET_OFFSET.y);
                             this.anims.play("bigbad_shootRight");
                         }
                         this.shootFromLeft = !this.shootFromLeft;
@@ -97,10 +118,15 @@ export default class BigBadGuy extends KillableEntity implements IPhysics {
                 this.stateCounter -= delta;
                 if (this.stateCounter <= 0) {
                     this.audioMultiShot.play({ volume: 0.25 });
-                    let angle = 0;
-                    for (let i = 0; i < 10; ++i) {
-                        angle = ((Math.PI / 2) * i) / 10 + Math.PI * (5 / 4);
-                        this.gameScene.createBullet(this.x, this.y, Math.cos(angle) * 500, Math.sin(angle) * -500);
+                    let angle;
+                    for (let i = 0; i < this.BULLET_SPRAY_NUM; ++i) {
+                        angle = i * (this.BULLET_SPRAY_ANGLE / this.BULLET_SPRAY_NUM) + this.BULLET_SPRAY_ANGLE_OFFSET;
+                        this.gameScene.createBullet(
+                            this.x,
+                            this.y,
+                            Math.cos(angle) * this.BULLET_SPRAY_SPEED,
+                            Math.sin(angle) * -this.BULLET_SPRAY_SPEED
+                        );
                     }
                     this.currentState = BigBadGuyState.Paused;
                     this.stateCounter = 1000;
@@ -111,14 +137,13 @@ export default class BigBadGuy extends KillableEntity implements IPhysics {
                 this.stateCounter -= delta;
                 if (this.stateCounter <= 0) {
                     this.currentState = BigBadGuyState.Strafing;
-                    this.stateCounter = Phaser.Math.Between(1000, 5000);
+                    this.stateCounter = Phaser.Math.Between(this.MIN_STRAFE_MILLIS, this.MAX_STRAFE_MILLIS);
                 }
                 break;
         }
     }
-
     damage(amount: number): void {
         super.damage(amount);
-        this.flashTint(0xff0000, 250, true);
+        this.flashTint(COLORS.RED, this.FLASH_MILLIS, true);
     }
 }
