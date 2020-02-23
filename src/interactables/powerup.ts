@@ -1,21 +1,21 @@
-import IPhysics from "../entities/IPhysics";
+import IPhysicsEntity from "../entities/IPhysicsEntity";
 import Player from "../entities/player";
 import SceneBase from "../scenes/SceneBase";
 
-export enum PowerUpType {
+export enum WeaponType {
     Phaser = 0,
     ChargeShot = 1,
     Minigun = 2,
 }
-export const NUM_POWERUP_TYPES = Object.keys(PowerUpType).length / 2;
+export const NUM_POWERUP_TYPES = Object.keys(WeaponType).length / 2;
 
-export default class PowerUp extends Phaser.Physics.Arcade.Sprite implements IPhysics {
+export default class PowerUp extends Phaser.Physics.Arcade.Sprite implements IPhysicsEntity {
     private readonly TYPE_SWITCH_INTERVAL = 1000;
     private readonly VEL_X = 30;
     private readonly VEL_Y = 30;
 
     private gameScene: SceneBase;
-    private currentPowerupType: PowerUpType;
+    private currentPowerupType: WeaponType;
     private hitPlayerHandler: ArcadePhysicsCallback;
     private stateCounter: number = this.TYPE_SWITCH_INTERVAL;
 
@@ -23,7 +23,7 @@ export default class PowerUp extends Phaser.Physics.Arcade.Sprite implements IPh
         super(scene, x, y, "powerUp");
         this.gameScene = scene;
         this.hitPlayerHandler = this.hitPlayer.bind(this);
-        this.currentPowerupType = PowerUpType.Phaser;
+        this.currentPowerupType = WeaponType.Phaser;
         this.anims.play("powerup0");
         scene.tweens.add({
             targets: this,

@@ -1,6 +1,6 @@
 import { COLORS, DEPTH_VALUES } from "../constants";
 import SceneBase from "../scenes/SceneBase";
-import IPhysics from "./IPhysics";
+import IPhysicsEntity from "./IPhysicsEntity";
 import KillableEntity from "./killableEntity";
 
 enum BigBadGuyState {
@@ -9,13 +9,13 @@ enum BigBadGuyState {
     Paused,
 }
 
-export default class BigBadGuy extends KillableEntity implements IPhysics {
+export default class BigBadGuy extends KillableEntity implements IPhysicsEntity {
     private readonly BULLET_OFFSET = {
         x: 60,
         y: 30,
     };
-    private readonly MIN_STRAFE_MILLIS = 1000;
-    private readonly MAX_STRAFE_MILLIS = 5000;
+    private readonly MIN_STRAFE_MILLIS = 3000;
+    private readonly MAX_STRAFE_MILLIS = 6000;
     private readonly SHOOT_INTERVAL = 600;
     private readonly MOVE_TIME_MULT = 0.001;
     private readonly MOVE_SIN_AMPLITUDE = 100;
@@ -124,8 +124,7 @@ export default class BigBadGuy extends KillableEntity implements IPhysics {
                         this.gameScene.createBullet(
                             this.x,
                             this.y,
-                            Math.cos(angle) * this.BULLET_SPRAY_SPEED,
-                            Math.sin(angle) * -this.BULLET_SPRAY_SPEED
+                            new Phaser.Math.Vector2(Math.cos(angle) * this.BULLET_SPRAY_SPEED, Math.sin(angle) * -this.BULLET_SPRAY_SPEED)
                         );
                     }
                     this.currentState = BigBadGuyState.Paused;

@@ -54,6 +54,9 @@ export default class MainScene extends SceneBase {
         this.load.audio("audioPhaserBeam", ["assets/audio/phaser_beam.ogg", "assets/audio/phaser_beam.mp3"]);
         this.load.audio("audioSingleShot", ["assets/audio/single_shot.ogg", "assets/audio/single_shot.mp3"]);
         this.load.audio("audioMultiShot", ["assets/audio/multi_shot.ogg", "assets/audio/multi_shot.mp3"]);
+        this.load.audio("audioCharge", ["assets/audio/charge.ogg", "assets/audio/charge.mp3"]);
+        this.load.audio("audioChargeShot", ["assets/audio/charge_shot.ogg", "assets/audio/charge_shot.mp3"]);
+        this.load.audio("audioMinigunShot", ["assets/audio/minigun_shot.ogg", "assets/audio/minigun_shot.mp3"]);
     }
 
     create(): void {

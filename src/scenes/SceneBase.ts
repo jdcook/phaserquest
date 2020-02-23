@@ -1,6 +1,6 @@
 import Bullet from "../attacks/bullet";
 import GreenBullet from "../attacks/greenBullet";
-import IPhysics from "../entities/IPhysics";
+import IPhysicsEntity from "../entities/IPhysicsEntity";
 import Player from "../entities/player";
 import TimedSprite from "../helpers/timedSprite";
 import PowerUp from "../interactables/powerup";
@@ -73,7 +73,7 @@ export default class SceneBase extends Phaser.Scene {
         this.physics.add.collider(this.playerProjectilesGroup, this.terrainGroup);
     }
 
-    addToPhysicsGroup(entity: IPhysics & Phaser.GameObjects.GameObject, group: Phaser.GameObjects.Group): void {
+    addToPhysicsGroup(entity: IPhysicsEntity & Phaser.GameObjects.GameObject, group: Phaser.GameObjects.Group): void {
         group.add(entity, true);
         entity.initPhysics();
     }
@@ -171,10 +171,8 @@ export default class SceneBase extends Phaser.Scene {
         bullet.initPhysics();
     }
 
-    createBullet(x: number, y: number, xVel: number, yVel: number): void {
-        const bullet = new Bullet(this, x, y);
-        this.addToPhysicsGroup(bullet, this.enemyProjectilesGroup);
-        bullet.setVelocity(xVel, yVel);
+    createBullet(x: number, y: number, vel: Phaser.Math.Vector2): void {
+        this.addToPhysicsGroup(new Bullet(this, x, y, vel), this.enemyProjectilesGroup);
     }
 
     createPowerup(x: number, y: number): void {

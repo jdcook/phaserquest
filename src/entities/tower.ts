@@ -1,6 +1,6 @@
 import { DEPTH_VALUES } from "../constants";
 import SceneBase from "../scenes/SceneBase";
-import IPhysics from "./IPhysics";
+import IPhysicsEntity from "./IPhysicsEntity";
 
 enum TowerState {
     Idle,
@@ -9,7 +9,7 @@ enum TowerState {
     PausedCharging,
 }
 
-export default class Tower extends Phaser.Physics.Arcade.Sprite implements IPhysics {
+export default class Tower extends Phaser.Physics.Arcade.Sprite implements IPhysicsEntity {
     private readonly ACTIVATE_RADIUS: number = 150;
     private readonly SPRITE_SCALE = 2;
     private readonly EXPLOSION_SCALE = 4;

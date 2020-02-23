@@ -5,13 +5,13 @@ import SceneBase from "../scenes/SceneBase";
 export default class PhaserBeam extends Phaser.GameObjects.Sprite {
     private readonly SCALE: number = 2;
     private readonly MAX_LEN: number = 2000;
+    private readonly DAMAGE_PER_LEVEL: number = 1;
 
     private gameScene: SceneBase;
     private firing: boolean;
     private audioPhaser: Phaser.Sound.BaseSound;
     private raycastLine: Phaser.Geom.Line;
     private particles: Phaser.GameObjects.Particles.ParticleEmitter;
-    private damage: number = 1;
 
     constructor(scene: SceneBase) {
         super(scene, 0, 0, "phaserBeam");
@@ -26,12 +26,14 @@ export default class PhaserBeam extends Phaser.GameObjects.Sprite {
         this.raycastLine = new Phaser.Geom.Line();
     }
 
-    startFiring(startPosition: Phaser.Math.Vector2, cursorPosition: Phaser.Math.Vector2): void {
+    startFiring(weaponLevel: number, startPosition: Phaser.Math.Vector2, cursorPosition: Phaser.Math.Vector2): void {
         if (!this.firing) {
             this.firing = true;
             this.visible = true;
             this.audioPhaser.play();
         }
+
+        this.scaleY = weaponLevel;
 
         const diff = new Phaser.Math.Vector2(cursorPosition);
         diff.subtract(startPosition);
@@ -53,7 +55,7 @@ export default class PhaserBeam extends Phaser.GameObjects.Sprite {
                 // damage entity
                 if (hitResult.hitGameObject instanceof KillableEntity) {
                     const killable = hitResult.hitGameObject as KillableEntity;
-                    killable.damage(this.damage);
+                    killable.damage(weaponLevel * this.DAMAGE_PER_LEVEL);
                 }
             }
         }
@@ -93,10 +95,5 @@ export default class PhaserBeam extends Phaser.GameObjects.Sprite {
             this.audioPhaser.stop();
             this.particles.stop();
         }
-    }
-
-    setIntensity(intensity: number): void {
-        this.damage = intensity;
-        this.scaleY = intensity;
     }
 }

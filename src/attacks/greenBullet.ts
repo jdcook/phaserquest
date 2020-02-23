@@ -1,29 +1,16 @@
-import { DEPTH_VALUES } from "../constants";
-import IPhysics from "../entities/IPhysics";
 import KillableEntity from "../entities/killableEntity";
 import SceneBase from "../scenes/SceneBase";
+import Projectile from "./projectile";
 
-export default class GreenBullet extends Phaser.Physics.Arcade.Sprite implements IPhysics {
-    private readonly Y_VEL = 1000;
-    private readonly EXPLOSION_SPRITE_SCALE = 2;
-    private readonly EXPLOSION_SIZE = 100;
-    private readonly EXPLOSION_DAMAGE = 25;
-    private gameScene: SceneBase;
-    private hitEntityHandler: ArcadePhysicsCallback;
+const Y_VEL = 1000;
+const EXPLOSION_SPRITE_SCALE = 2;
+const EXPLOSION_SIZE = 100;
+const EXPLOSION_DAMAGE = 25;
 
+export default class GreenBullet extends Projectile {
     constructor(scene: SceneBase, x: number, y: number) {
-        super(scene, x, y, "greenBullet");
-        this.gameScene = scene;
+        super(scene, x, y, "greenBullet", 0, new Phaser.Math.Vector2(0, Y_VEL), false);
         this.anims.play("greenBulletIdle");
-        this.hitEntityHandler = this.hitEntity.bind(this);
-        this.depth = DEPTH_VALUES.PROJECTILES;
-    }
-
-    initPhysics(): void {
-        this.scene.physics.add.overlap(this, this.gameScene.playerGroup, this.hitEntityHandler);
-        this.scene.physics.add.overlap(this, this.gameScene.terrainGroup, this.hitEntityHandler);
-        (this.body as Phaser.Physics.Arcade.Body).setAllowGravity(false);
-        this.setVelocityY(this.Y_VEL);
     }
 
     /*
@@ -31,13 +18,13 @@ export default class GreenBullet extends Phaser.Physics.Arcade.Sprite implements
      */
     hitEntity(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject): void {
         // create explosion
-        this.gameScene.createExplosion(this.x, this.y, this.EXPLOSION_SPRITE_SCALE);
+        this.gameScene.createExplosion(this.x, this.y, EXPLOSION_SPRITE_SCALE);
 
         // damage players in range
-        const bodies = this.scene.physics.overlapRect(this.x, this.y, this.EXPLOSION_SIZE, this.EXPLOSION_SIZE, true, false);
+        const bodies = this.scene.physics.overlapRect(this.x, this.y, EXPLOSION_SIZE, EXPLOSION_SIZE, true, false);
         bodies.forEach((body: Phaser.Physics.Arcade.Body | Phaser.Physics.Arcade.StaticBody) => {
             if (body.gameObject instanceof KillableEntity) {
-                (body.gameObject as KillableEntity).damage(this.EXPLOSION_DAMAGE);
+                (body.gameObject as KillableEntity).damage(EXPLOSION_DAMAGE);
             }
         });
 

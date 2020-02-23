@@ -1,6 +1,6 @@
 import PhaserBeam from "../attacks/phaserBeam";
 import { DEPTH_VALUES } from "../constants";
-import { PowerUpType } from "../interactables/powerup";
+import { WeaponType } from "../interactables/powerup";
 import SceneBase from "../scenes/SceneBase";
 import KillableEntity from "./killableEntity";
 
@@ -19,11 +19,10 @@ export default class Player extends KillableEntity {
     private jumpHoldCounter: number = 0;
     private phaserBeam: PhaserBeam;
     private weaponLevel: number = 1;
-    private powerUpType: PowerUpType = PowerUpType.Phaser;
-
-    setPhaserBeam(phaserBeam: PhaserBeam): void {
-        this.phaserBeam = phaserBeam;
-    }
+    private weaponType: WeaponType = WeaponType.Phaser;
+    private audioCharge: Phaser.Sound.BaseSound;
+    private audioChargeShot: Phaser.Sound.BaseSound;
+    private audioMinigunShot: Phaser.Sound.BaseSound;
 
     constructor(scene: SceneBase, x: number, y: number) {
         super(scene, x, y, "player");
@@ -39,6 +38,8 @@ export default class Player extends KillableEntity {
 
         this.phaserBeam = new PhaserBeam(scene);
         scene.add.existing(this.phaserBeam);
+
+        this.audioCharge = this.scene.sound.add("audioCharge");
     }
 
     update(time: number, delta: number): void {
@@ -70,30 +71,78 @@ export default class Player extends KillableEntity {
             this.jumpHoldCounter = 0;
         }
 
-        // phaser
-        if (this.phaserBeam) {
-            if (this.scene.input.activePointer.isDown) {
-                const pointer = this.scene.input.activePointer;
-                pointer.updateWorldPoint(camera);
-                this.phaserBeam.startFiring(new Phaser.Math.Vector2(this.x, this.y), new Phaser.Math.Vector2(pointer.worldX, pointer.worldY));
-            } else {
-                this.phaserBeam.stopFiring();
-            }
+        // weapons
+        const isMouseDown = this.scene.input.activePointer.isDown;
+        const pointer = this.scene.input.activePointer;
+        pointer.updateWorldPoint(camera);
+        const currentPos = new Phaser.Math.Vector2(this.x, this.y);
+        const targetPos = new Phaser.Math.Vector2(pointer.worldX, pointer.worldY);
+        const direction = new Phaser.Math.Vector2(targetPos).subtract(currentPos).normalize();
+
+        switch (this.weaponType) {
+            case WeaponType.Phaser:
+                if (isMouseDown) {
+                    this.phaserBeam.startFiring(this.weaponLevel, currentPos, targetPos);
+                } else {
+                    this.phaserBeam.stopFiring();
+                }
+                break;
+            case WeaponType.ChargeShot:
+                if (isMouseDown) {
+                    // make charging sound and increase charging graphic to a max amount, megaman style
+                    if (!this.audioCharge.isPlaying) {
+                        this.audioCharge.play();
+                    }
+                    this.chargeShotCounter += delta;
+                    // max charge level increases with powerups
+                } else {
+                    // if there is a charge, release the projectile at current charge
+                    this.audioCharge.stop();
+                    if (this.chargeShotCounter > 0) {
+                        const currentMaxChargeMillis = this.STARTING_CHARGE_SHOT_MILLIS + this.CHARGE_SHOT_MILLIS_PER_LEVEL * this.weaponLevel;
+                        this.createChargedShot(Math.min(this.chargeShotCounter, currentMaxChargeMillis), currentPos, direction);
+                    }
+                    this.chargeShotCounter = 0;
+                }
+                break;
+            case WeaponType.Minigun:
+                if (isMouseDown) {
+                    this.minigunShotCounter -= delta;
+                    if (this.minigunShotCounter <= 0) {
+                        this.createMinigunShot(currentPos, direction);
+                        this.minigunShotCounter = this.STARTING_MINIGUN_INTERVAL - this.MINIGUN_INTERVAL_REDUCTION_PER_LEVEL * this.weaponLevel;
+                    }
+                    // shoot a projectile every interval
+                    // interval is shorter with powerups
+                }
+                break;
         }
     }
+
+    createChargedShot(chargedMillis: number, origin: Phaser.Math.Vector2, direction: Phaser.Math.Vector2): void {
+        this.audioChargeShot.play();
+        // this.gameScene.addToPhysicsGroup(new ChargedShot(), this.gameScene.playerProjectilesGroup);
+    }
+
+    createMinigunShot(origin: Phaser.Math.Vector2, direction: Phaser.Math.Vector2): void {
+        this.audioMinigunShot.play();
+        // this.gameScene.addToPhysicsGroup(new MinigunShot(), this.gameScene.playerProjectilesGroup);
+    }
+
+    powerUp(powerUpType: WeaponType): void {
+        ++this.weaponLevel;
+    }
+
+    private readonly STARTING_CHARGE_SHOT_MILLIS = 1000;
+    private readonly CHARGE_SHOT_MILLIS_PER_LEVEL = 250;
+    private readonly STARTING_MINIGUN_INTERVAL = 400;
+    private readonly MINIGUN_INTERVAL_REDUCTION_PER_LEVEL = 50;
+    private chargeShotCounter: number = 0;
+    private minigunShotCounter: number = 0;
 
     die(): void {
         this.phaserBeam.stopFiring();
         this.phaserBeam.destroy();
         super.die();
-    }
-
-    powerUp(powerUpType: PowerUpType): void {
-        switch (powerUpType) {
-            default:
-            case PowerUpType.Phaser:
-                this.phaserBeam.setIntensity(++this.weaponLevel);
-                break;
-        }
     }
 }
