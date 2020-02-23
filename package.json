@@ -15,11 +15,13 @@
         "webpack-dev-server": "^3.10.3"
     },
     "scripts": {
-        "build": "webpack --progress --mode production",
+        "build": "webpack --progress --mode production && node build",
         "dev": "webpack-dev-server",
         "start": "webpack-dev-server"
     },
     "dependencies": {
+        "archiver": "^3.1.1",
+        "fs": "^0.0.1-security",
         "phaser": "^3.22.0"
     }
 }

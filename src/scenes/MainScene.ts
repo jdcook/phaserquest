@@ -2,7 +2,6 @@ import { DEPTH_VALUES } from "../constants";
 import BigBadGuy from "../entities/bigBadGuy";
 import Player from "../entities/player";
 import Tower from "../entities/tower";
-import PowerUp from "../interactables/powerup";
 import SceneBase from "./SceneBase";
 
 const WORLD_BOUNDS = {
@@ -180,7 +179,5 @@ export default class MainScene extends SceneBase {
         SPAWNS.towers.forEach(spawn => {
             this.addToPhysicsGroup(new Tower(this, spawn.x, spawn.y), this.levelBodilessGroup);
         });
-
-        this.addToPhysicsGroup(new PowerUp(this, 90, 0), this.playerGroup);
     }
 }

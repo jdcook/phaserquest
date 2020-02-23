@@ -32,7 +32,7 @@ export default class Player extends KillableEntity {
 
     private jumpHoldCounter = 0;
     private phaserBeam: PhaserBeam;
-    private weaponLevel = 1;
+    private weaponLevel = 0;
     private weaponType: WeaponType = WeaponType.Phaser;
     private audioCharge: Phaser.Sound.BaseSound;
     private audioChargeShot: Phaser.Sound.BaseSound;
@@ -100,50 +100,52 @@ export default class Player extends KillableEntity {
         const targetPos = new Phaser.Math.Vector2(pointer.worldX, pointer.worldY);
         const direction = new Phaser.Math.Vector2(targetPos).subtract(currentPos).normalize();
 
-        switch (this.weaponType) {
-            case WeaponType.Phaser:
-                if (isMouseDown) {
-                    this.phaserBeam.startFiring(this.weaponLevel, currentPos, targetPos);
-                } else {
-                    this.phaserBeam.stopFiring();
-                }
-                break;
-            case WeaponType.ChargeShot:
-                const currentMaxChargeMillis = STARTING_CHARGE_SHOT_MILLIS + CHARGE_SHOT_MILLIS_PER_LEVEL * (this.weaponLevel - 1);
+        if (this.weaponLevel > 0) {
+            switch (this.weaponType) {
+                case WeaponType.Phaser:
+                    if (isMouseDown) {
+                        this.phaserBeam.startFiring(this.weaponLevel, currentPos, targetPos);
+                    } else {
+                        this.phaserBeam.stopFiring();
+                    }
+                    break;
+                case WeaponType.ChargeShot:
+                    const currentMaxChargeMillis = STARTING_CHARGE_SHOT_MILLIS + CHARGE_SHOT_MILLIS_PER_LEVEL * (this.weaponLevel - 1);
 
-                if (isMouseDown) {
-                    // make charging sound and increase charging graphic to a max amount, megaman style
-                    if (!this.audioCharge.isPlaying && !this.isFinishedCharging) {
-                        this.audioCharge.play({ volume: 0.25, loop: true });
-                    }
-                    this.chargeShotCounter += delta;
-                    if (this.chargeShotCounter >= currentMaxChargeMillis && !this.isFinishedCharging) {
-                        this.audioChargeFinish.play({ volume: 0.25 });
+                    if (isMouseDown) {
+                        // make charging sound and increase charging graphic to a max amount, megaman style
+                        if (!this.audioCharge.isPlaying && !this.isFinishedCharging) {
+                            this.audioCharge.play({ volume: 0.25, loop: true });
+                        }
+                        this.chargeShotCounter += delta;
+                        if (this.chargeShotCounter >= currentMaxChargeMillis && !this.isFinishedCharging) {
+                            this.audioChargeFinish.play({ volume: 0.25 });
+                            this.audioCharge.stop();
+                            this.isFinishedCharging = true;
+                        }
+                        // max charge level increases with powerups
+                    } else {
+                        // if there is a charge, release the projectile at current charge
                         this.audioCharge.stop();
-                        this.isFinishedCharging = true;
+                        if (this.chargeShotCounter > 0) {
+                            this.createChargedShot(Math.min(this.chargeShotCounter, currentMaxChargeMillis), currentPos, direction);
+                        }
+                        this.chargeShotCounter = 0;
+                        this.isFinishedCharging = false;
                     }
-                    // max charge level increases with powerups
-                } else {
-                    // if there is a charge, release the projectile at current charge
-                    this.audioCharge.stop();
-                    if (this.chargeShotCounter > 0) {
-                        this.createChargedShot(Math.min(this.chargeShotCounter, currentMaxChargeMillis), currentPos, direction);
+                    break;
+                case WeaponType.Minigun:
+                    if (isMouseDown) {
+                        this.minigunShotCounter -= delta;
+                        if (this.minigunShotCounter <= 0) {
+                            this.createMinigunShot(currentPos, direction);
+                            this.minigunShotCounter = STARTING_MINIGUN_INTERVAL - MINIGUN_INTERVAL_REDUCTION_PER_LEVEL * this.weaponLevel;
+                        }
+                        // shoot a projectile every interval
+                        // interval is shorter with powerups
                     }
-                    this.chargeShotCounter = 0;
-                    this.isFinishedCharging = false;
-                }
-                break;
-            case WeaponType.Minigun:
-                if (isMouseDown) {
-                    this.minigunShotCounter -= delta;
-                    if (this.minigunShotCounter <= 0) {
-                        this.createMinigunShot(currentPos, direction);
-                        this.minigunShotCounter = STARTING_MINIGUN_INTERVAL - MINIGUN_INTERVAL_REDUCTION_PER_LEVEL * this.weaponLevel;
-                    }
-                    // shoot a projectile every interval
-                    // interval is shorter with powerups
-                }
-                break;
+                    break;
+            }
         }
     }
 
