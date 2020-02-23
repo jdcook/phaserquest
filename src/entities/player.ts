@@ -11,8 +11,8 @@ const MIN_JUMP_VEL = 400;
 const MAX_JUMPSQUAT_MILLIS = 96;
 const JUMP_MILLIS_TO_VEL_MULT = 8;
 
-const MINIGUN_DAMAGE_1 = 2;
-const MINIGUN_DAMAGE_2 = 4;
+const MINIGUN_DAMAGE_1 = 10;
+const MINIGUN_DAMAGE_2 = 20;
 const MINIGUN_POWERED_UP_LEVEL = 3;
 const MINIGUN_SHOT_SPEED = 1000;
 const STARTING_MINIGUN_INTERVAL = 400;
@@ -195,8 +195,8 @@ export default class Player extends KillableEntity {
     }
 
     die(): void {
-        this.phaserBeam.stopFiring();
-        this.phaserBeam.destroy();
-        super.die();
+        // this.phaserBeam.stopFiring();
+        // this.phaserBeam.destroy();
+        // super.die();
     }
 }

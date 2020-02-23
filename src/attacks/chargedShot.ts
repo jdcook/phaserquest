@@ -1,4 +1,3 @@
-import KillableEntity from "../entities/killableEntity";
 import SceneBase from "../scenes/SceneBase";
 import Projectile from "./projectile";
 
@@ -10,13 +9,6 @@ export default class ChargedShot extends Projectile {
         this.scale = 3;
         if (chargeLevel < NUM_CHARGE_LEVEL_SPRITES) {
             this.anims.play(`chargedShot${chargeLevel}`);
-        }
-    }
-
-    hitEntity(obj1: Phaser.GameObjects.GameObject, obj2: Phaser.GameObjects.GameObject): void {
-        const other = obj1 === this ? obj2 : obj1;
-        if (other instanceof KillableEntity) {
-            other.damage(this.damage);
         }
     }
 }
