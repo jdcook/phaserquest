@@ -1,17 +1,14 @@
-import Bullet from "../attacks/bullet";
-import GreenBullet from "../attacks/greenBullet";
 import IPhysicsEntity from "../entities/IPhysicsEntity";
 import Player from "../entities/player";
 import TimedSprite from "../helpers/timedSprite";
-import PowerUp from "../interactables/powerup";
 import { RaycastHitResult, RaycastHitResults } from "../types";
+
+const EXPLOSION_MILLIS = 500;
 
 /*
  * The scene object that all scene extend, handles common physics functionality
  */
 export default class SceneBase extends Phaser.Scene {
-    private readonly EXPLOSION_MILLIS = 500;
-
     player: Player;
 
     playerGroup: Phaser.GameObjects.Group;
@@ -159,23 +156,9 @@ export default class SceneBase extends Phaser.Scene {
     }
 
     createExplosion(x: number, y: number, scale: number): void {
-        const explosion = new TimedSprite(this, x, y, "explosion", this.EXPLOSION_MILLIS);
+        const explosion = new TimedSprite(this, x, y, "explosion", EXPLOSION_MILLIS);
         explosion.setScale(scale, scale);
         explosion.anims.play("explode");
         this.levelBodilessGroup.add(explosion, true);
-    }
-
-    createGreenBullet(x: number, y: number): void {
-        const bullet = new GreenBullet(this, x, y);
-        this.enemyProjectilesGroup.add(bullet, true);
-        bullet.initPhysics();
-    }
-
-    createBullet(x: number, y: number, vel: Phaser.Math.Vector2): void {
-        this.addToPhysicsGroup(new Bullet(this, x, y, vel), this.enemyProjectilesGroup);
-    }
-
-    createPowerup(x: number, y: number): void {
-        this.addToPhysicsGroup(new PowerUp(this, x, y), this.playerGroup);
     }
 }

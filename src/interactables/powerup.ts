@@ -9,15 +9,14 @@ export enum WeaponType {
 }
 export const NUM_POWERUP_TYPES = Object.keys(WeaponType).length / 2;
 
+const TYPE_SWITCH_INTERVAL = 1000;
+const VEL_X = 30;
+const VEL_Y = 30;
 export default class PowerUp extends Phaser.Physics.Arcade.Sprite implements IPhysicsEntity {
-    private readonly TYPE_SWITCH_INTERVAL = 1000;
-    private readonly VEL_X = 30;
-    private readonly VEL_Y = 30;
-
     private gameScene: SceneBase;
     private currentPowerupType: WeaponType;
     private hitPlayerHandler: ArcadePhysicsCallback;
-    private stateCounter: number = this.TYPE_SWITCH_INTERVAL;
+    private stateCounter: number = TYPE_SWITCH_INTERVAL;
 
     constructor(scene: SceneBase, x: number, y: number) {
         super(scene, x, y, "powerUp");
@@ -37,14 +36,14 @@ export default class PowerUp extends Phaser.Physics.Arcade.Sprite implements IPh
 
     initPhysics(): void {
         this.scene.physics.add.overlap(this, this.gameScene.playerGroup, this.hitPlayerHandler);
-        this.setVelocity(this.VEL_X, this.VEL_Y);
+        this.setVelocity(VEL_X, VEL_Y);
     }
 
     update(time: number, delta: number): void {
         this.stateCounter -= delta;
         if (this.stateCounter <= 0) {
             this.currentPowerupType = (this.currentPowerupType + 1) % NUM_POWERUP_TYPES;
-            this.stateCounter = this.TYPE_SWITCH_INTERVAL;
+            this.stateCounter = TYPE_SWITCH_INTERVAL;
             this.anims.play(`powerup${this.currentPowerupType}`);
         }
     }

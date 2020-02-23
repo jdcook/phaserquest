@@ -3,12 +3,11 @@ import IPhysicsEntity from "../entities/IPhysicsEntity";
 import KillableEntity from "../entities/killableEntity";
 import SceneBase from "../scenes/SceneBase";
 
+const LIFE_MILLIS = 3000;
 export default class Projectile extends Phaser.Physics.Arcade.Sprite implements IPhysicsEntity {
-    private readonly LIFE_MILLIS = 3000;
-
     protected gameScene: SceneBase;
     protected damage: number;
-    protected lifeCounter: number = this.LIFE_MILLIS;
+    protected lifeCounter: number = LIFE_MILLIS;
     protected isPlayerFaction: boolean;
     private hitEntityHandler: ArcadePhysicsCallback;
     private initialVel: Phaser.Math.Vector2;

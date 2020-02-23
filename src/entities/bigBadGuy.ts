@@ -1,3 +1,5 @@
+import Bullet from "../attacks/bullet";
+import GreenBullet from "../attacks/greenBullet";
 import { COLORS, DEPTH_VALUES } from "../constants";
 import SceneBase from "../scenes/SceneBase";
 import IPhysicsEntity from "./IPhysicsEntity";
@@ -9,23 +11,22 @@ enum BigBadGuyState {
     Paused,
 }
 
+const BULLET_OFFSET = {
+    x: 60,
+    y: 30,
+};
+const MIN_STRAFE_MILLIS = 3000;
+const MAX_STRAFE_MILLIS = 6000;
+const SHOOT_INTERVAL = 600;
+const MOVE_TIME_MULT = 0.001;
+const MOVE_SIN_AMPLITUDE = 100;
+const BULLET_SPRAY_NUM = 10;
+const BULLET_SPRAY_ANGLE = Math.PI / 2;
+const ANGLE_DOWN = Math.PI * (3 / 2);
+const BULLET_SPRAY_ANGLE_OFFSET = this.ANGLE_DOWN - this.BULLET_SPRAY_ANGLE / 2;
+const BULLET_SPRAY_SPEED = 500;
+const FLASH_MILLIS = 250;
 export default class BigBadGuy extends KillableEntity implements IPhysicsEntity {
-    private readonly BULLET_OFFSET = {
-        x: 60,
-        y: 30,
-    };
-    private readonly MIN_STRAFE_MILLIS = 3000;
-    private readonly MAX_STRAFE_MILLIS = 6000;
-    private readonly SHOOT_INTERVAL = 600;
-    private readonly MOVE_TIME_MULT = 0.001;
-    private readonly MOVE_SIN_AMPLITUDE = 100;
-    private readonly BULLET_SPRAY_NUM = 10;
-    private readonly BULLET_SPRAY_ANGLE = Math.PI / 2;
-    private readonly ANGLE_DOWN = Math.PI * (3 / 2);
-    private readonly BULLET_SPRAY_ANGLE_OFFSET = this.ANGLE_DOWN - this.BULLET_SPRAY_ANGLE / 2;
-    private readonly BULLET_SPRAY_SPEED = 500;
-    private readonly FLASH_MILLIS = 250;
-
     private moveCounter: number = 0;
     private originalPos = { x: 0, y: 0 };
     private shootCounter: number;
@@ -74,8 +75,8 @@ export default class BigBadGuy extends KillableEntity implements IPhysicsEntity 
             repeat: -1,
         });
 
-        this.stateCounter = Phaser.Math.Between(this.MIN_STRAFE_MILLIS, this.MAX_STRAFE_MILLIS);
-        this.shootCounter = this.SHOOT_INTERVAL;
+        this.stateCounter = Phaser.Math.Between(MIN_STRAFE_MILLIS, MAX_STRAFE_MILLIS);
+        this.shootCounter = SHOOT_INTERVAL;
     }
 
     initPhysics(): void {
@@ -93,19 +94,22 @@ export default class BigBadGuy extends KillableEntity implements IPhysicsEntity 
                     this.stateCounter = 1000;
                 } else {
                     this.moveCounter += delta;
-                    this.setPosition(
-                        this.originalPos.x + Math.sin(this.moveCounter * this.MOVE_TIME_MULT) * this.MOVE_SIN_AMPLITUDE,
-                        this.originalPos.y
-                    );
+                    this.setPosition(this.originalPos.x + Math.sin(this.moveCounter * MOVE_TIME_MULT) * MOVE_SIN_AMPLITUDE, this.originalPos.y);
 
                     this.shootCounter -= delta;
                     if (this.shootCounter <= 0) {
                         this.audioSingleShot.play({ volume: 0.25 });
                         if (this.shootFromLeft) {
-                            this.gameScene.createGreenBullet(this.x - this.BULLET_OFFSET.x, this.y + this.BULLET_OFFSET.y);
+                            this.gameScene.addToPhysicsGroup(
+                                new GreenBullet(this.gameScene, this.x - BULLET_OFFSET.x, this.y + BULLET_OFFSET.y),
+                                this.gameScene.enemyProjectilesGroup
+                            );
                             this.anims.play("bigbad_shootLeft");
                         } else {
-                            this.gameScene.createGreenBullet(this.x + this.BULLET_OFFSET.x, this.y + this.BULLET_OFFSET.y);
+                            this.gameScene.addToPhysicsGroup(
+                                new GreenBullet(this.gameScene, this.x + BULLET_OFFSET.x, this.y + BULLET_OFFSET.y),
+                                this.gameScene.enemyProjectilesGroup
+                            );
                             this.anims.play("bigbad_shootRight");
                         }
                         this.shootFromLeft = !this.shootFromLeft;
@@ -119,12 +123,16 @@ export default class BigBadGuy extends KillableEntity implements IPhysicsEntity 
                 if (this.stateCounter <= 0) {
                     this.audioMultiShot.play({ volume: 0.25 });
                     let angle;
-                    for (let i = 0; i < this.BULLET_SPRAY_NUM; ++i) {
-                        angle = i * (this.BULLET_SPRAY_ANGLE / this.BULLET_SPRAY_NUM) + this.BULLET_SPRAY_ANGLE_OFFSET;
-                        this.gameScene.createBullet(
-                            this.x,
-                            this.y,
-                            new Phaser.Math.Vector2(Math.cos(angle) * this.BULLET_SPRAY_SPEED, Math.sin(angle) * -this.BULLET_SPRAY_SPEED)
+                    for (let i = 0; i < BULLET_SPRAY_NUM; ++i) {
+                        angle = i * (BULLET_SPRAY_ANGLE / BULLET_SPRAY_NUM) + BULLET_SPRAY_ANGLE_OFFSET;
+                        this.gameScene.addToPhysicsGroup(
+                            new Bullet(
+                                this.gameScene,
+                                this.x,
+                                this.y,
+                                new Phaser.Math.Vector2(Math.cos(angle) * BULLET_SPRAY_SPEED, Math.sin(angle) * -BULLET_SPRAY_SPEED)
+                            ),
+                            this.gameScene.enemyProjectilesGroup
                         );
                     }
                     this.currentState = BigBadGuyState.Paused;
@@ -136,13 +144,13 @@ export default class BigBadGuy extends KillableEntity implements IPhysicsEntity 
                 this.stateCounter -= delta;
                 if (this.stateCounter <= 0) {
                     this.currentState = BigBadGuyState.Strafing;
-                    this.stateCounter = Phaser.Math.Between(this.MIN_STRAFE_MILLIS, this.MAX_STRAFE_MILLIS);
+                    this.stateCounter = Phaser.Math.Between(MIN_STRAFE_MILLIS, MAX_STRAFE_MILLIS);
                 }
                 break;
         }
     }
     damage(amount: number): void {
         super.damage(amount);
-        this.flashTint(COLORS.RED, this.FLASH_MILLIS, true);
+        this.flashTint(COLORS.RED, FLASH_MILLIS, true);
     }
 }

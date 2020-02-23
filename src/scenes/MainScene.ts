@@ -2,27 +2,27 @@ import { DEPTH_VALUES } from "../constants";
 import BigBadGuy from "../entities/bigBadGuy";
 import Player from "../entities/player";
 import Tower from "../entities/tower";
+import PowerUp from "../interactables/powerup";
 import SceneBase from "./SceneBase";
 
+const WORLD_BOUNDS = {
+    x: -5000,
+    y: 0,
+    width: 10000,
+    height: 600,
+    centerX: 0,
+};
+const SPAWNS = {
+    bigBadGuys: [
+        { x: 500, y: 100 },
+        { x: 0, y: 100 },
+    ],
+    tower: { x: 400, y: 520 },
+    player: { x: 100, y: 100 },
+};
+const DIRT_SIZE = 32;
+const WALL_HEIGHT = 2000;
 export default class MainScene extends SceneBase {
-    readonly WORLD_BOUNDS = {
-        x: -5000,
-        y: 0,
-        width: 10000,
-        height: 600,
-        centerX: 0,
-    };
-    readonly SPAWNS = {
-        bigBadGuys: [
-            { x: 500, y: 100 },
-            { x: 0, y: 100 },
-        ],
-        tower: { x: 400, y: 520 },
-        player: { x: 100, y: 100 },
-    };
-    readonly DIRT_SIZE = 32;
-    readonly WALL_HEIGHT = 2000;
-
     constructor() {
         super({
             active: false,
@@ -42,6 +42,10 @@ export default class MainScene extends SceneBase {
         this.load.image("phaserBeam", "assets/textures/phaser_beam.png");
         this.load.spritesheet("bullet", "assets/textures/bullet.png", { frameWidth: 7, frameHeight: 7 });
         this.load.spritesheet("greenBullet", "assets/textures/green_bullet.png", { frameWidth: 12, frameHeight: 28 });
+        this.load.spritesheet("chargedShot", "assets/textures/charged_shot.png", { frameWidth: 10, frameHeight: 14 });
+        this.load.image("maxChargedShot", "assets/textures/max_charge_shot.png");
+        this.load.image("mingunShot", "assets/textures/minigun_shot.png");
+        this.load.image("mingunShot2", "assets/textures/minigun_shot_2.png");
 
         // particles
         this.load.image("particleRed", "assets/textures/red.png");
@@ -120,38 +124,25 @@ export default class MainScene extends SceneBase {
         // #endregion
 
         // entities
-        this.player = new Player(this, this.SPAWNS.player.x, this.SPAWNS.player.y);
+        this.player = new Player(this, SPAWNS.player.x, SPAWNS.player.y);
         this.playerGroup.add(this.player, true);
 
-        this.addToPhysicsGroup(new BigBadGuy(this, this.SPAWNS.bigBadGuys[0].x, this.SPAWNS.bigBadGuys[0].y), this.enemyGroup);
-        this.addToPhysicsGroup(new BigBadGuy(this, this.SPAWNS.bigBadGuys[1].x, this.SPAWNS.bigBadGuys[1].y), this.enemyGroup);
+        this.addToPhysicsGroup(new BigBadGuy(this, SPAWNS.bigBadGuys[0].x, SPAWNS.bigBadGuys[0].y), this.enemyGroup);
+        this.addToPhysicsGroup(new BigBadGuy(this, SPAWNS.bigBadGuys[1].x, SPAWNS.bigBadGuys[1].y), this.enemyGroup);
 
         // level
-        const background = this.add.tileSprite(this.WORLD_BOUNDS.x, this.WORLD_BOUNDS.y, this.WORLD_BOUNDS.width, this.WORLD_BOUNDS.height, "sky");
+        const background = this.add.tileSprite(WORLD_BOUNDS.x, WORLD_BOUNDS.y, WORLD_BOUNDS.width, WORLD_BOUNDS.height, "sky");
         background.setOrigin(0, 0);
         background.setDepth(DEPTH_VALUES.BACKGROUND);
 
-        const ground = this.add.tileSprite(
-            this.WORLD_BOUNDS.centerX,
-            this.WORLD_BOUNDS.height - this.DIRT_SIZE / 2,
-            this.WORLD_BOUNDS.width,
-            this.DIRT_SIZE,
-            "dirt"
-        );
+        const ground = this.add.tileSprite(WORLD_BOUNDS.centerX, WORLD_BOUNDS.height - DIRT_SIZE / 2, WORLD_BOUNDS.width, DIRT_SIZE, "dirt");
         this.terrainGroup.add(ground);
-        const wallLeft = this.add.tileSprite(this.WORLD_BOUNDS.x, this.WORLD_BOUNDS.y, this.DIRT_SIZE, this.WALL_HEIGHT, "dirt");
+        const wallLeft = this.add.tileSprite(WORLD_BOUNDS.x, WORLD_BOUNDS.y, DIRT_SIZE, WALL_HEIGHT, "dirt");
         this.terrainGroup.add(wallLeft);
-        const wallRight = this.add.tileSprite(
-            this.WORLD_BOUNDS.x + this.WORLD_BOUNDS.width,
-            this.WORLD_BOUNDS.y,
-            this.DIRT_SIZE,
-            this.WALL_HEIGHT,
-            "dirt"
-        );
+        const wallRight = this.add.tileSprite(WORLD_BOUNDS.x + WORLD_BOUNDS.width, WORLD_BOUNDS.y, DIRT_SIZE, WALL_HEIGHT, "dirt");
         this.terrainGroup.add(wallRight);
 
-        this.addToPhysicsGroup(new Tower(this, this.SPAWNS.tower.x, this.SPAWNS.tower.y), this.levelBodilessGroup);
-
-        this.createPowerup(0, 0);
+        this.addToPhysicsGroup(new Tower(this, SPAWNS.tower.x, SPAWNS.tower.y), this.levelBodilessGroup);
+        this.addToPhysicsGroup(new PowerUp(this, 0, 0), this.playerGroup);
     }
 }

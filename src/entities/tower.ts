@@ -1,4 +1,5 @@
 import { DEPTH_VALUES } from "../constants";
+import PowerUp from "../interactables/powerup";
 import SceneBase from "../scenes/SceneBase";
 import IPhysicsEntity from "./IPhysicsEntity";
 
@@ -9,20 +10,19 @@ enum TowerState {
     PausedCharging,
 }
 
+const ACTIVATE_RADIUS: number = 150;
+const SPRITE_SCALE = 2;
+const EXPLOSION_SCALE = 4;
+const ACTIVATE_MILLIS = 500;
+const CHARGE_MILLIS = 5000;
 export default class Tower extends Phaser.Physics.Arcade.Sprite implements IPhysicsEntity {
-    private readonly ACTIVATE_RADIUS: number = 150;
-    private readonly SPRITE_SCALE = 2;
-    private readonly EXPLOSION_SCALE = 4;
-    private readonly ACTIVATE_MILLIS = 500;
-    private readonly CHARGE_MILLIS = 5000;
-
     private currentState: TowerState = TowerState.Idle;
     private gameScene: SceneBase;
     private stateCounter: number;
     constructor(scene: SceneBase, x: number, y: number) {
         super(scene, x, y, "tower");
         this.gameScene = scene;
-        this.scale = this.SPRITE_SCALE;
+        this.scale = SPRITE_SCALE;
         this.depth = DEPTH_VALUES.FOREGROUND;
     }
 
@@ -31,9 +31,9 @@ export default class Tower extends Phaser.Physics.Arcade.Sprite implements IPhys
     update(time: number, delta: number): void {
         switch (this.currentState) {
             case TowerState.Idle:
-                if (Math.abs(this.gameScene.player.x - this.x) < this.ACTIVATE_RADIUS) {
+                if (Math.abs(this.gameScene.player.x - this.x) < ACTIVATE_RADIUS) {
                     this.anims.play("towerActivate", true);
-                    this.stateCounter = this.ACTIVATE_MILLIS;
+                    this.stateCounter = ACTIVATE_MILLIS;
                     this.currentState = TowerState.Activating;
                 }
                 break;
@@ -41,16 +41,16 @@ export default class Tower extends Phaser.Physics.Arcade.Sprite implements IPhys
                 this.stateCounter -= delta;
                 if (this.stateCounter <= 0) {
                     this.currentState = TowerState.Charging;
-                    this.stateCounter = this.CHARGE_MILLIS;
+                    this.stateCounter = CHARGE_MILLIS;
                 }
                 break;
             case TowerState.Charging:
-                if (Math.abs(this.gameScene.player.x - this.x) < this.ACTIVATE_RADIUS) {
+                if (Math.abs(this.gameScene.player.x - this.x) < ACTIVATE_RADIUS) {
                     this.anims.play("towerPulse", true);
                     this.stateCounter -= delta;
                     if (this.stateCounter <= 0) {
-                        this.gameScene.createExplosion(this.x, this.y, this.EXPLOSION_SCALE);
-                        this.gameScene.createPowerup(this.x, this.y);
+                        this.gameScene.createExplosion(this.x, this.y, EXPLOSION_SCALE);
+                        this.gameScene.addToPhysicsGroup(new PowerUp(this.gameScene, this.x, this.y), this.gameScene.playerGroup);
                         this.destroy();
                     }
                 } else {

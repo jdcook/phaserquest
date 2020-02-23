@@ -2,11 +2,10 @@ import { DEPTH_VALUES } from "../constants";
 import KillableEntity from "../entities/killableEntity";
 import SceneBase from "../scenes/SceneBase";
 
+const SCALE: number = 2;
+const MAX_LEN: number = 2000;
+const DAMAGE_PER_LEVEL: number = 1;
 export default class PhaserBeam extends Phaser.GameObjects.Sprite {
-    private readonly SCALE: number = 2;
-    private readonly MAX_LEN: number = 2000;
-    private readonly DAMAGE_PER_LEVEL: number = 1;
-
     private gameScene: SceneBase;
     private firing: boolean;
     private audioPhaser: Phaser.Sound.BaseSound;
@@ -41,13 +40,8 @@ export default class PhaserBeam extends Phaser.GameObjects.Sprite {
         direction.normalize();
 
         // raycast to see how long this should be. If no raycast hit is detected, continue past the edge of the screen
-        let phaserLen = this.MAX_LEN;
-        this.raycastLine.setTo(
-            startPosition.x,
-            startPosition.y,
-            startPosition.x + direction.x * this.MAX_LEN,
-            startPosition.y + direction.y * this.MAX_LEN
-        );
+        let phaserLen = MAX_LEN;
+        this.raycastLine.setTo(startPosition.x, startPosition.y, startPosition.x + direction.x * MAX_LEN, startPosition.y + direction.y * MAX_LEN);
         const hitResult = this.gameScene.raycastClosestHit(this.raycastLine, this.gameScene.enemyGroup);
         if (hitResult) {
             phaserLen = hitResult.distance;
@@ -55,7 +49,7 @@ export default class PhaserBeam extends Phaser.GameObjects.Sprite {
                 // damage entity
                 if (hitResult.hitGameObject instanceof KillableEntity) {
                     const killable = hitResult.hitGameObject as KillableEntity;
-                    killable.damage(weaponLevel * this.DAMAGE_PER_LEVEL);
+                    killable.damage(weaponLevel * DAMAGE_PER_LEVEL);
                 }
             }
         }
@@ -63,7 +57,7 @@ export default class PhaserBeam extends Phaser.GameObjects.Sprite {
         const halfPhaserLen = phaserLen / 2;
         this.setPosition(startPosition.x + direction.x * halfPhaserLen, startPosition.y + direction.y * halfPhaserLen);
 
-        this.scaleX = halfPhaserLen * this.SCALE;
+        this.scaleX = halfPhaserLen * SCALE;
         const radians = Math.atan2(diff.y, diff.x);
         this.setRotation(radians);
 
