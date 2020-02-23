@@ -2,9 +2,9 @@ import { DEPTH_VALUES } from "../constants";
 import KillableEntity from "../entities/killableEntity";
 import SceneBase from "../scenes/SceneBase";
 
-const SCALE: number = 2;
-const MAX_LEN: number = 2000;
-const DAMAGE_PER_LEVEL: number = 1;
+const SCALE = 2;
+const MAX_LEN = 2000;
+const DAMAGE_PER_LEVEL = 1;
 export default class PhaserBeam extends Phaser.GameObjects.Sprite {
     private gameScene: SceneBase;
     private firing: boolean;

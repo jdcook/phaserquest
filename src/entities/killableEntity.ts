@@ -4,7 +4,7 @@ import SceneBase from "../scenes/SceneBase";
 export default class KillableEntity extends Phaser.Physics.Arcade.Sprite {
     protected gameScene: SceneBase;
     protected health: number;
-    private flashCounter: number = 0;
+    private flashCounter = 0;
     private flashColor: number;
     private flashMillis: number;
 

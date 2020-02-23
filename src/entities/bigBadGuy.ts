@@ -23,11 +23,12 @@ const MOVE_SIN_AMPLITUDE = 100;
 const BULLET_SPRAY_NUM = 10;
 const BULLET_SPRAY_ANGLE = Math.PI / 2;
 const ANGLE_DOWN = Math.PI * (3 / 2);
-const BULLET_SPRAY_ANGLE_OFFSET = this.ANGLE_DOWN - this.BULLET_SPRAY_ANGLE / 2;
+const BULLET_SPRAY_ANGLE_OFFSET = ANGLE_DOWN - BULLET_SPRAY_ANGLE / 2;
 const BULLET_SPRAY_SPEED = 500;
 const FLASH_MILLIS = 250;
+const UPDATE_RADIUS = 600;
 export default class BigBadGuy extends KillableEntity implements IPhysicsEntity {
-    private moveCounter: number = 0;
+    private moveCounter = 0;
     private originalPos = { x: 0, y: 0 };
     private shootCounter: number;
     private shootFromLeft: boolean;
@@ -84,6 +85,10 @@ export default class BigBadGuy extends KillableEntity implements IPhysicsEntity 
     }
 
     update(time: number, delta: number): void {
+        if (Math.abs(this.x - this.gameScene.player.x) > UPDATE_RADIUS) {
+            return;
+        }
+
         super.update(time, delta);
         switch (this.currentState) {
             case BigBadGuyState.Strafing:

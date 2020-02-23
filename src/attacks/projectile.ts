@@ -14,10 +14,12 @@ export default class Projectile extends Phaser.Physics.Arcade.Sprite implements 
 
     constructor(scene: SceneBase, x: number, y: number, texture: string, damage: number, initialVel: Phaser.Math.Vector2, isPlayerFaction: boolean) {
         super(scene, x, y, texture);
+        this.gameScene = scene;
         this.damage = damage;
         this.initialVel = initialVel;
         this.isPlayerFaction = isPlayerFaction;
         this.depth = DEPTH_VALUES.PROJECTILES;
+        this.hitEntityHandler = this.hitEntity.bind(this);
     }
 
     initPhysics(): void {

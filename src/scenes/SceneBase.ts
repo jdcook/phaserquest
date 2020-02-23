@@ -65,9 +65,6 @@ export default class SceneBase extends Phaser.Scene {
 
         this.physics.add.collider(this.playerGroup, this.terrainGroup);
         this.physics.add.collider(this.enemyGroup, this.terrainGroup);
-        // this.physics.add.collider(this.enemyProjectilesGroup, this.terrainGroup);
-        // this.physics.add.overlap
-        this.physics.add.collider(this.playerProjectilesGroup, this.terrainGroup);
     }
 
     addToPhysicsGroup(entity: IPhysicsEntity & Phaser.GameObjects.GameObject, group: Phaser.GameObjects.Group): void {

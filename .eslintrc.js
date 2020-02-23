@@ -10,9 +10,9 @@ module.exports = {
         sourceType: "module", // Allows for the use of imports
     },
     rules: {
-        "@typescript-eslint/no-inferrable-types": "off",
         "spaced-comment": "warn",
         curly: "warn",
+        "@typescript-eslint/no-inferrable-types": "warn",
         "@typescript-eslint/no-empty-function": "off",
         "@typescript-eslint/interface-name-prefix": "off",
         "@typescript-eslint/no-unused-vars": ["warn", { args: "none" }],

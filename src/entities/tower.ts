@@ -10,7 +10,7 @@ enum TowerState {
     PausedCharging,
 }
 
-const ACTIVATE_RADIUS: number = 150;
+const ACTIVATE_RADIUS = 150;
 const SPRITE_SCALE = 2;
 const EXPLOSION_SCALE = 4;
 const ACTIVATE_MILLIS = 500;
