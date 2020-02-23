@@ -11,6 +11,7 @@ export default class PhaserBeam extends Phaser.GameObjects.Sprite {
     private audioPhaser: Phaser.Sound.BaseSound;
     private raycastLine: Phaser.Geom.Line;
     private particles: Phaser.GameObjects.Particles.ParticleEmitter;
+    private damage: number = 1;
 
     constructor(scene: SceneBase) {
         super(scene, 0, 0, "phaserBeam");
@@ -52,14 +53,15 @@ export default class PhaserBeam extends Phaser.GameObjects.Sprite {
                 // damage entity
                 if (hitResult.hitGameObject instanceof KillableEntity) {
                     const killable = hitResult.hitGameObject as KillableEntity;
-                    killable.damage(1);
+                    killable.damage(this.damage);
                 }
             }
         }
 
         const halfPhaserLen = phaserLen / 2;
         this.setPosition(startPosition.x + direction.x * halfPhaserLen, startPosition.y + direction.y * halfPhaserLen);
-        this.setScale(halfPhaserLen * this.SCALE, 1);
+
+        this.scaleX = halfPhaserLen * this.SCALE;
         const radians = Math.atan2(diff.y, diff.x);
         this.setRotation(radians);
 
@@ -91,5 +93,10 @@ export default class PhaserBeam extends Phaser.GameObjects.Sprite {
             this.audioPhaser.stop();
             this.particles.stop();
         }
+    }
+
+    setIntensity(intensity: number): void {
+        this.damage = intensity;
+        this.scaleY = intensity;
     }
 }

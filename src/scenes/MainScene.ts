@@ -120,13 +120,8 @@ export default class MainScene extends SceneBase {
         this.player = new Player(this, this.SPAWNS.player.x, this.SPAWNS.player.y);
         this.playerGroup.add(this.player, true);
 
-        const bigBad = new BigBadGuy(this, this.SPAWNS.bigBadGuys[0].x, this.SPAWNS.bigBadGuys[0].y);
-        this.enemyGroup.add(bigBad, true);
-        bigBad.initPhysics();
-
-        const bigBad2 = new BigBadGuy(this, this.SPAWNS.bigBadGuys[1].x, this.SPAWNS.bigBadGuys[1].y);
-        this.enemyGroup.add(bigBad2, true);
-        bigBad2.initPhysics();
+        this.addToPhysicsGroup(new BigBadGuy(this, this.SPAWNS.bigBadGuys[0].x, this.SPAWNS.bigBadGuys[0].y), this.enemyGroup);
+        this.addToPhysicsGroup(new BigBadGuy(this, this.SPAWNS.bigBadGuys[1].x, this.SPAWNS.bigBadGuys[1].y), this.enemyGroup);
 
         // level
         const background = this.add.tileSprite(this.WORLD_BOUNDS.x, this.WORLD_BOUNDS.y, this.WORLD_BOUNDS.width, this.WORLD_BOUNDS.height, "sky");
@@ -152,8 +147,8 @@ export default class MainScene extends SceneBase {
         );
         this.terrainGroup.add(wallRight);
 
-        const tower = new Tower(this, this.SPAWNS.tower.x, this.SPAWNS.tower.y);
-        this.levelBodilessGroup.add(tower, true);
-        tower.initPhysics();
+        this.addToPhysicsGroup(new Tower(this, this.SPAWNS.tower.x, this.SPAWNS.tower.y), this.levelBodilessGroup);
+
+        this.createPowerup(0, 0);
     }
 }

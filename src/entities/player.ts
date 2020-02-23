@@ -1,5 +1,6 @@
 import PhaserBeam from "../attacks/phaserBeam";
 import { DEPTH_VALUES } from "../constants";
+import { PowerUpType } from "../interactables/powerup";
 import SceneBase from "../scenes/SceneBase";
 import KillableEntity from "./killableEntity";
 
@@ -17,6 +18,8 @@ export default class Player extends KillableEntity {
 
     private jumpHoldCounter: number = 0;
     private phaserBeam: PhaserBeam;
+    private weaponLevel: number = 1;
+    private powerUpType: PowerUpType = PowerUpType.Phaser;
 
     setPhaserBeam(phaserBeam: PhaserBeam): void {
         this.phaserBeam = phaserBeam;
@@ -83,5 +86,14 @@ export default class Player extends KillableEntity {
         this.phaserBeam.stopFiring();
         this.phaserBeam.destroy();
         super.die();
+    }
+
+    powerUp(powerUpType: PowerUpType): void {
+        switch (powerUpType) {
+            default:
+            case PowerUpType.Phaser:
+                this.phaserBeam.setIntensity(++this.weaponLevel);
+                break;
+        }
     }
 }

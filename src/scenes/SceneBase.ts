@@ -1,12 +1,17 @@
 import Bullet from "../attacks/bullet";
 import GreenBullet from "../attacks/greenBullet";
+import IPhysics from "../entities/IPhysics";
 import Player from "../entities/player";
+import TimedSprite from "../helpers/timedSprite";
+import PowerUp from "../interactables/powerup";
 import { RaycastHitResult, RaycastHitResults } from "../types";
 
 /*
  * The scene object that all scene extend, handles common physics functionality
  */
 export default class SceneBase extends Phaser.Scene {
+    private readonly EXPLOSION_MILLIS = 500;
+
     player: Player;
 
     playerGroup: Phaser.GameObjects.Group;
@@ -18,16 +23,40 @@ export default class SceneBase extends Phaser.Scene {
 
     preload(): void {
         this.load.spritesheet("explosion", "assets/textures/explosion.png", { frameWidth: 24, frameHeight: 24 });
+        this.load.spritesheet("powerUp", "assets/textures/powerup.png", { frameWidth: 20, frameHeight: 21 });
     }
 
     create(): void {
-        // animations
+        // #region animations
         this.anims.create({
             key: "explode",
             frames: this.anims.generateFrameNumbers("explosion", { start: 0, end: 14 }),
             frameRate: 40,
             repeat: 0,
         });
+
+        const powerupFPS = 10;
+        this.anims.create({
+            key: "powerup0",
+            frames: [{ key: "powerUp", frame: 0 }],
+            frameRate: powerupFPS,
+            repeat: -1,
+        });
+
+        this.anims.create({
+            key: "powerup1",
+            frames: [{ key: "powerUp", frame: 1 }],
+            frameRate: powerupFPS,
+            repeat: -1,
+        });
+
+        this.anims.create({
+            key: "powerup2",
+            frames: [{ key: "powerUp", frame: 2 }],
+            frameRate: powerupFPS,
+            repeat: -1,
+        });
+        // #endregion
 
         // physics setup
         this.playerGroup = this.physics.add.group({ classType: Phaser.GameObjects.GameObject, runChildUpdate: true });
@@ -42,6 +71,11 @@ export default class SceneBase extends Phaser.Scene {
         // this.physics.add.collider(this.enemyProjectilesGroup, this.terrainGroup);
         // this.physics.add.overlap
         this.physics.add.collider(this.playerProjectilesGroup, this.terrainGroup);
+    }
+
+    addToPhysicsGroup(entity: IPhysics & Phaser.GameObjects.GameObject, group: Phaser.GameObjects.Group): void {
+        group.add(entity, true);
+        entity.initPhysics();
     }
 
     /*
@@ -125,9 +159,10 @@ export default class SceneBase extends Phaser.Scene {
     }
 
     createExplosion(x: number, y: number, scale: number): void {
-        const explosion = this.add.sprite(x, y, "explosion");
+        const explosion = new TimedSprite(this, x, y, "explosion", this.EXPLOSION_MILLIS);
         explosion.setScale(scale, scale);
         explosion.anims.play("explode");
+        this.levelBodilessGroup.add(explosion, true);
     }
 
     createGreenBullet(x: number, y: number): void {
@@ -138,8 +173,11 @@ export default class SceneBase extends Phaser.Scene {
 
     createBullet(x: number, y: number, xVel: number, yVel: number): void {
         const bullet = new Bullet(this, x, y);
-        this.enemyProjectilesGroup.add(bullet, true);
-        bullet.initPhysics();
+        this.addToPhysicsGroup(bullet, this.enemyProjectilesGroup);
         bullet.setVelocity(xVel, yVel);
+    }
+
+    createPowerup(x: number, y: number): void {
+        this.addToPhysicsGroup(new PowerUp(this, x, y), this.playerGroup);
     }
 }
